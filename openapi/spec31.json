@@ -3,7 +3,7 @@
   "info": {
     "title": "api.audio",
     "version": "v1",
-    "description": "Super cool audio api.\n",
+    "description": "Super cool audio api. INSERT GOOD DESCRIPTION HERE.\n",
     "termsOfService": "https://www.aflorithmic.ai/terms-of-use",
     "contact": {
       "name": "Product Owner of API Audio",
@@ -21,7 +21,7 @@
       "post": {
         "operationId": "postSpeech",
         "summary": "Synthesize Speech from Script.",
-        "description": "Good for extensive content.  - Set `sync` field to false for asynchronous behaviour (no waiting for response, retrieve it later using GET method).\n- Each Script section can have a separate configuration. \n- Script sections are synthesized in parallel, you may use it to your advantage to increase time performance.\n- Script sections that contain a media or sound effect tags are split into multiple files, as the media are rendered in `/mastering`. Similarly, a Script section containing only media tags will not be rendered here.\n- Currently only wav format is supported in the output.\n",
+        "description": "Good for extensive content. \n- Set `sync` field to false for asynchronous behaviour (no waiting for response, retrieve it later using GET method).\n\n- Each Script section can have a separate configuration. \n\n- Script sections are synthesized in parallel, you may use it to your advantage to increase time performance.\n\n- Script sections that contain a media or sound effect tags are split into multiple files, as the media are rendered in `/mastering`. Similarly, a Script section containing only media tags will not be rendered here.\n\n- Currently only wav format is supported in the output.\n",
         "requestBody": {
           "description": "Defined configuration applies globally to all the Script sections. Use `sections` field to overwrite fields in sections.",
           "required": true,
@@ -88,12 +88,35 @@
         },
         "responses": {
           "200": {
-            "description": "Requests to TTS models were succesfully sent and responses were gathered. Look into the results of each section to determine whether the synthesis itself was succesful.\nKeys are Script section names. If a Script section was split, the name will have `_N` appended to it e.g. intro, intro_2, intro_3 ...\n",
+            "description": "Requests to TTS models were succesfully sent and responses were gathered. Look into the results of each section to determine whether the synthesis itself was succesful.\n\nKeys are Script section names. If a Script section was split, the name will have `_N` appended to it e.g. intro, intro_2, intro_3 ...\n",
             "content": {
               "application/json": {
                 "schema": {
-                  "patternProperties": {
-                    ".+": {
+                  "example": {
+                    "intro": {
+                      "message": "AZURE/en-ZA-LeahNeural : synthesis successful.",
+                      "status_code": "201",
+                      "created_at": "2022-05-12 10:26:18.655711",
+                      "requestId": "210f086a-264e-4ae3-9543-84329abbed44",
+                      "url": "https://v1.api.audio/url/47782e/intro__%243ct10n~1of3.wav"
+                    },
+                    "main": {
+                      "message": "AZURE/en-ZA-LeahNeural : synthesis successful.",
+                      "status_code": "201",
+                      "created_at": "2022-05-12 10:26:18.677016",
+                      "requestId": "210f086a-264e-4ae3-9543-84329abbed44",
+                      "url": "https://v1.api.audio/url/485f52/intro__%243ct10n~2of3.wav"
+                    },
+                    "outro": {
+                      "message": "AZURE voice model could not process the script : Invalid response received: code: 400, message: The 'mstts:express-as' start tag on line 1 position 165 does not match the end tag of 'voice'. Line 1, position 290.",
+                      "status_code": "422",
+                      "created_at": "2022-05-12 10:26:18.694793",
+                      "requestId": "210f086a-264e-4ae3-9543-84329abbed44",
+                      "url": ""
+                    }
+                  },
+                  "properties": {
+                    "<sectionName>": {
                       "type": "object",
                       "properties": {
                         "message": {
@@ -104,8 +127,8 @@
                           "type": "string",
                           "description": "\"201\" means created, \"422\" means there was some issue that is described in the `message` field.\n",
                           "enum": [
-                            201,
-                            422
+                            "201",
+                            "422"
                           ]
                         },
                         "created_at": {
@@ -150,15 +173,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "description": "Error message."
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -168,15 +183,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "description": "Error message."
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -186,7 +193,7 @@
       "get": {
         "operationId": "getSpeech",
         "summary": "Retrieve latest Speech files.",
-        "description": "The endpoint holds on with the response when there is a server-side synthesis in progress for given `scriptId`. Just as POST method, it returns `202` when approaching 30 seconds of response wait.\n`scriptId` and `requestId` are interchangeable.\n",
+        "description": "The endpoint holds on with the response when there is a server-side synthesis in progress for given `scriptId`. Just as POST method, it returns `202` when approaching 30 seconds of response wait.\n\n`scriptId` and `requestId` are interchangeable.\n",
         "parameters": [
           {
             "in": "query",
@@ -239,6 +246,17 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "example": {
+                    "intro": "https://v1.api.audio/url/992047/intro__%243ct10n~1of3.wav",
+                    "main": "https://v1.api.audio/url/1e04a6/main__%243ct10n~2of3.wav",
+                    "outro": "https://v1.api.audio/url/b1a325/outro__%243ct10n~3of3.wav"
+                  },
+                  "properties": {
+                    "<sectionName>": {
+                      "type": "string",
+                      "description": "URL to download the synthesized file."
+                    }
+                  },
                   "patternProperties": {
                     ".+": {
                       "type": "string",
@@ -268,15 +286,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "description": "Error message."
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -286,15 +296,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "description": "Error message."
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -335,6 +337,31 @@
                     }
                   },
                   "properties": {
+                    "<sectionName>": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "description": "Either `{provider}/{alias} : synthesis successful.` or an error message.\n"
+                        },
+                        "status_code": {
+                          "type": "string",
+                          "description": "Always \"422\".\n"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "description": "Time of TTS response."
+                        },
+                        "requestId": {
+                          "type": "string",
+                          "description": "Unique identifier of the request."
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "Empty field."
+                        }
+                      }
+                    },
                     "errors": {
                       "type": "array",
                       "items": {
@@ -354,7 +381,7 @@
       "post": {
         "operationId": "postSpeechSync",
         "summary": "Synthesize speech directly from text.",
-        "description": "Good for time-critical applications.  - Maximum runtime: 30 seconds. ## Caching TTS responses are globally cached to improve performance. You can set `Cache-Control` to `no-cache` to skip the cache.\nFollowing parameters are hashed as the cache key: - text - voice - speed - metadata - effect - bitrate - sampling_rate - output specified by the `Accept` header Cache is missed when any of these parameters change.\n",
+        "description": "Good for time-critical applications. **Maximum runtime is 30 seconds**.\n### Caching\nTTS responses are globally cached to improve performance. You can set `Cache-Control` to `no-cache` to skip the cache.\nFollowing parameters are hashed as the cache key:\n  - text\n  - voice\n  - speed\n  - metadata\n  - effect\n  - bitrate\n  - sampling_rate\n  - output specified by the `Accept` header\n\nCache is missed when any of these parameters change.\n",
         "parameters": [
           {
             "in": "header",
@@ -372,7 +399,7 @@
           }
         ],
         "requestBody": {
-          "description": "Fields `text` and `ssml` are interchangeable. ## SSML When using `ssml` field, expected SSML format varies depending on provider of the voice. \nIf in doubt, consult provider's SSML documentation. Any kind of error will be forwarded back to you. ## Limits Maximum character lengths: - `text` field: 800 characters - `ssml` field: 1000 characters\n",
+          "description": "Fields `text` and `ssml` are interchangeable.\n### SSML\n  When using `ssml` field, expected SSML format varies depending on provider of the voice. \n\n  If in doubt, consult provider's SSML documentation. Any kind of error will be forwarded back to you.\n### Limits\n  Maximum character lengths:\n  - `text` field: 800 characters\n  - `ssml` field: 1000 characters\n",
           "required": true,
           "content": {
             "application/json": {
@@ -497,15 +524,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "description": "Error message."
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -515,15 +534,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "description": "Error message."
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -533,15 +544,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "description": "Error message."
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -571,5 +574,10 @@
         }
       }
     }
-  }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ]
 }
