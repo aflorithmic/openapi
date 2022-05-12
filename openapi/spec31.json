@@ -1,0 +1,575 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "api.audio",
+    "version": "v1",
+    "description": "Super cool audio api.\n",
+    "termsOfService": "https://www.aflorithmic.ai/terms-of-use",
+    "contact": {
+      "name": "Product Owner of API Audio",
+      "email": "linda@aflorithmic.ai",
+      "url": "https://api.audio/"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://v1.api.audio"
+    }
+  ],
+  "paths": {
+    "/speech": {
+      "post": {
+        "operationId": "postSpeech",
+        "summary": "Synthesize Speech from Script.",
+        "description": "Good for extensive content.  - Set `sync` field to false for asynchronous behaviour (no waiting for response, retrieve it later using GET method).\n- Each Script section can have a separate configuration. \n- Script sections are synthesized in parallel, you may use it to your advantage to increase time performance.\n- Script sections that contain a media or sound effect tags are split into multiple files, as the media are rendered in `/mastering`. Similarly, a Script section containing only media tags will not be rendered here.\n- Currently only wav format is supported in the output.\n",
+        "requestBody": {
+          "description": "Defined configuration applies globally to all the Script sections. Use `sections` field to overwrite fields in sections.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "scriptId": {
+                    "type": "string",
+                    "description": "Reference to the Script that is to be synthesized, use `/script` to create and get it."
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "Specific version of the referenced Script."
+                  },
+                  "voice": {
+                    "type": "string",
+                    "default": "Joanna",
+                    "description": "Either alias or original (provider's) ID. Available voices are listed at https://library.api.audio/\n"
+                  },
+                  "speed": {
+                    "type": "number",
+                    "format": "float",
+                    "default": 1,
+                    "description": "Scalar for speed manipulation, range 0.5-3."
+                  },
+                  "silencePadding": {
+                    "type": "string",
+                    "description": "Amount of microseconds for silence padding. Half of the amount is inserted as silence at the beginning and at the end of each Speech file."
+                  },
+                  "effect": {
+                    "type": "string",
+                    "enum": [
+                      "chewie",
+                      "dark_father",
+                      "88b",
+                      "2r2d"
+                    ],
+                    "description": "Effect to apply to TTS."
+                  },
+                  "audience": {
+                    "type": "object",
+                    "description": "Object defining the values for Script parameters. E.g. for Script parameters in `Hello {{username}}, how's your {{weekday}} going?` the object would be `{\"username\": \"Michael\", \"weekday\": \"Sunday\"}`.\n",
+                    "properties": {},
+                    "additionalProperties": true
+                  },
+                  "sections": {
+                    "type": "object",
+                    "description": "Separate configurations for Script section. E.g. to specify a separate voice and speed for Script section `intro` the object would be `{\"main\": {\"voice\": \"Leah\", \"speed\": 1.2}}`.\n",
+                    "properties": {},
+                    "additionalProperties": true
+                  },
+                  "useDictionary": {
+                    "type": "boolean",
+                    "description": "Whether to apply phoneme injections specified in Script."
+                  }
+                },
+                "required": [
+                  "scriptId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Requests to TTS models were succesfully sent and responses were gathered. Look into the results of each section to determine whether the synthesis itself was succesful.\nKeys are Script section names. If a Script section was split, the name will have `_N` appended to it e.g. intro, intro_2, intro_3 ...\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "patternProperties": {
+                    ".+": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "description": "Either `{provider}/{alias} : synthesis successful.` or an error message.\n"
+                        },
+                        "status_code": {
+                          "type": "string",
+                          "description": "\"201\" means created, \"422\" means there was some issue that is described in the `message` field.\n",
+                          "enum": [
+                            201,
+                            422
+                          ]
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "description": "Time of TTS response."
+                        },
+                        "requestId": {
+                          "type": "string",
+                          "description": "Unique identifier of the request."
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "URL to download the synthesized file."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Synthesis is in progress on the server side. Returned when `sync` field is set to false, or when response wait is approaching 30 seconds.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "description": "Unique identifier of the request."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Error messages explain the problem.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "Error message."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Voice or scriptId not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "Error message."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getSpeech",
+        "summary": "Retrieve latest Speech files.",
+        "description": "The endpoint holds on with the response when there is a server-side synthesis in progress for given `scriptId`. Just as POST method, it returns `202` when approaching 30 seconds of response wait.\n`scriptId` and `requestId` are interchangeable.\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "scriptId",
+            "description": "Reference to the Script that is to be retrieved. Use /script to create and get it.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "version",
+            "description": "Specific version of the Script to be retrieved.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "requestId",
+            "description": "Reference to the particular Speech request to be retrieved.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "section",
+            "description": "Section name of the specific section to be retrieved.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "scriptParameters",
+            "description": "Reference to specified audience in POST request. E.g. for audience `{\"username\": \"Michael\", \"weekday\": \"Sunday\"}` the parameters would be `username=Michael&weekday=Sunday` (not case-sensitive).\n",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned URLs for all sections. As in POST, keys are Script section names, but the value is just the URL string.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "patternProperties": {
+                    ".+": {
+                      "type": "string",
+                      "description": "URL to download the synthesized file."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Synthesis is in progress on the server side. Returned when response wait is approaching 30 seconds.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Error messages explain the problem.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "Error message."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Voice or scriptId not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "Error message."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "At least one of the Script sections encountered a problem during synthesis. Keys are Script section names.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "patternProperties": {
+                    ".+": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "description": "Either `{provider}/{alias} : synthesis successful.` or an error message.\n"
+                        },
+                        "status_code": {
+                          "type": "string",
+                          "description": "Always \"422\".\n",
+                          "enum": [
+                            422
+                          ]
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "description": "Time of TTS response."
+                        },
+                        "requestId": {
+                          "type": "string",
+                          "description": "Unique identifier of the request."
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "Empty field."
+                        }
+                      }
+                    }
+                  },
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "Additional errors."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/speech/sync": {
+      "post": {
+        "operationId": "postSpeechSync",
+        "summary": "Synthesize speech directly from text.",
+        "description": "Good for time-critical applications.  - Maximum runtime: 30 seconds. ## Caching TTS responses are globally cached to improve performance. You can set `Cache-Control` to `no-cache` to skip the cache.\nFollowing parameters are hashed as the cache key: - text - voice - speed - metadata - effect - bitrate - sampling_rate - output specified by the `Accept` header Cache is missed when any of these parameters change.\n",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Accept",
+            "description": "Specifies the format of the output audio.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "audio/wav",
+                "audio/mp3",
+                "audio/pcm"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Fields `text` and `ssml` are interchangeable. ## SSML When using `ssml` field, expected SSML format varies depending on provider of the voice. \nIf in doubt, consult provider's SSML documentation. Any kind of error will be forwarded back to you. ## Limits Maximum character lengths: - `text` field: 800 characters - `ssml` field: 1000 characters\n",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "description": "Text to synthesize. Maximum 800 characters."
+                  },
+                  "ssml": {
+                    "type": "string",
+                    "description": "Text in SSML format to synthesize. Maximum 1000 characters. Expected SSML format varies depending on provider of the voice."
+                  },
+                  "voice": {
+                    "type": "string",
+                    "description": "Either alias or original (provider's) ID. Available voices are listed at https://library.api.audio/\n"
+                  },
+                  "metadata": {
+                    "type": "boolean",
+                    "description": "Return JSON with base64 encoded audio and visemes, if available."
+                  },
+                  "sampling_rate": {
+                    "type": "string",
+                    "enum": [
+                      "16000",
+                      "22050",
+                      "24000",
+                      "44100",
+                      "48000"
+                    ],
+                    "default": "24000",
+                    "description": "Sampling rate of the output. Applicable to wave format."
+                  },
+                  "bitrate": {
+                    "type": "string",
+                    "default": "192",
+                    "description": "Bitrate of the output. Applicable to mp3 format."
+                  },
+                  "effect": {
+                    "type": "string",
+                    "enum": [
+                      "chewie",
+                      "dark_father",
+                      "88b",
+                      "2r2d"
+                    ],
+                    "description": "Effect to apply to TTS."
+                  },
+                  "speed": {
+                    "type": "number",
+                    "format": "float",
+                    "default": 1,
+                    "description": "Scalar for speed manipulation, range 0.5-3."
+                  }
+                },
+                "required": [
+                  "text",
+                  "voice"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful synthesis. Type of returned content is specified by `Accept` header in the request and `metadata` field.\n",
+            "content": {
+              "audio/wav": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "audio/mp3": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "audio_data": {
+                      "type": "string",
+                      "format": "byte",
+                      "description": "Base64 encoded."
+                    },
+                    "sampling_rate": {
+                      "type": "string",
+                      "description": "Sampling rate of the returned file."
+                    },
+                    "event_data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "This is an object schema for Messner visemes. Voices from resemble.ai return a different response. We're working on unifying metadata alltogether.",
+                        "properties": {
+                          "phoneme": {
+                            "type": "string"
+                          },
+                          "viseme": {
+                            "type": "string"
+                          },
+                          "offset": {
+                            "type": "number",
+                            "format": "float"
+                          },
+                          "duration": {
+                            "type": "number",
+                            "format": "float"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Error messages explain the problem.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "Error message."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Voice not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "Error message."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity. Error messages explain the problem.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "Error message."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "name": "x-api-key",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "BadRequest": {
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Error message."
+            }
+          }
+        }
+      }
+    }
+  }
+}
