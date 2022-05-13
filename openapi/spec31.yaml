@@ -1,5 +1,5 @@
 ---
-  openapi: 3.1.0
+  openapi: 3.0.1
   info:
     title: api.audio
     version: v1
@@ -13,9 +13,11 @@
   
   servers:
   - url: https://v1.api.audio
-  paths:
+  paths:      
     /speech:
       post:
+        tags:
+          - Speech
         operationId: postSpeech
         summary: Synthesize Speech from Script.
         description: |
@@ -149,6 +151,12 @@
               application/json:
                 schema:
                   $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
           '404':
             description: Voice or scriptId not found.
             content:
@@ -156,6 +164,8 @@
                 schema:
                   $ref: '#/components/schemas/BadRequest'
       get:
+        tags:
+          - Speech
         operationId: getSpeech
         summary: Retrieve latest Speech files.
         description: |
@@ -208,10 +218,6 @@
                     <sectionName>:
                       type: string
                       description: URL to download the synthesized file.
-                  patternProperties:
-                    .+:
-                      type: string
-                      description: URL to download the synthesized file.
           '202':
             description: Synthesis is in progress on the server side. Returned when response wait is approaching 30 seconds.
             content:
@@ -226,6 +232,12 @@
               application/json:
                 schema:
                   $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
           '404':
             description: Voice or scriptId not found.
             content:
@@ -237,29 +249,6 @@
             content:
               application/json:
                 schema:
-                  patternProperties:
-                    .+:
-                      type: object
-                      properties:
-                        message:
-                          type: string
-                          description: |
-                            Either `{provider}/{alias} : synthesis successful.` or an error message.
-                        status_code:
-                          type: string
-                          description: |
-                            Always "422".
-                          enum:
-                            - 422
-                        created_at:
-                          type: string
-                          description: Time of TTS response.
-                        requestId:
-                          type: string
-                          description: Unique identifier of the request.
-                        url:
-                          type: string
-                          description: Empty field.
                   properties:
                     <sectionName>:
                       type: object
@@ -289,6 +278,8 @@
   
     /speech/sync:
       post:
+        tags:
+          - Speech
         operationId: postSpeechSync
         summary: Synthesize speech directly from text.
         description: |
@@ -423,6 +414,12 @@
               application/json:
                 schema:
                   $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
           '404':
             description: Voice not found.
             content:
@@ -450,6 +447,11 @@
             items:
               type: string
               description: Error message.
+      BadAuth:
+        properties:
+          message:
+            type: string
+            example: Access denied. No authentication method can be found.
   
   security:
     - ApiKeyAuth: []

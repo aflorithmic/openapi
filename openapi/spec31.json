@@ -1,5 +1,5 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.1",
   "info": {
     "title": "api.audio",
     "version": "v1",
@@ -19,6 +19,9 @@
   "paths": {
     "/speech": {
       "post": {
+        "tags": [
+          "Speech"
+        ],
         "operationId": "postSpeech",
         "summary": "Synthesize Speech from Script.",
         "description": "Good for extensive content. \n- Set `sync` field to false for asynchronous behaviour (no waiting for response, retrieve it later using GET method).\n\n- Each Script section can have a separate configuration. \n\n- Script sections are synthesized in parallel, you may use it to your advantage to increase time performance.\n\n- Script sections that contain a media or sound effect tags are split into multiple files, as the media are rendered in `/mastering`. Similarly, a Script section containing only media tags will not be rendered here.\n\n- Currently only wav format is supported in the output.\n",
@@ -178,6 +181,16 @@
               }
             }
           },
+          "403": {
+            "description": "Authentication error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadAuth"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Voice or scriptId not found.",
             "content": {
@@ -191,6 +204,9 @@
         }
       },
       "get": {
+        "tags": [
+          "Speech"
+        ],
         "operationId": "getSpeech",
         "summary": "Retrieve latest Speech files.",
         "description": "The endpoint holds on with the response when there is a server-side synthesis in progress for given `scriptId`. Just as POST method, it returns `202` when approaching 30 seconds of response wait.\n\n`scriptId` and `requestId` are interchangeable.\n",
@@ -256,12 +272,6 @@
                       "type": "string",
                       "description": "URL to download the synthesized file."
                     }
-                  },
-                  "patternProperties": {
-                    ".+": {
-                      "type": "string",
-                      "description": "URL to download the synthesized file."
-                    }
                   }
                 }
               }
@@ -291,6 +301,16 @@
               }
             }
           },
+          "403": {
+            "description": "Authentication error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadAuth"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Voice or scriptId not found.",
             "content": {
@@ -306,36 +326,6 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "patternProperties": {
-                    ".+": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Either `{provider}/{alias} : synthesis successful.` or an error message.\n"
-                        },
-                        "status_code": {
-                          "type": "string",
-                          "description": "Always \"422\".\n",
-                          "enum": [
-                            422
-                          ]
-                        },
-                        "created_at": {
-                          "type": "string",
-                          "description": "Time of TTS response."
-                        },
-                        "requestId": {
-                          "type": "string",
-                          "description": "Unique identifier of the request."
-                        },
-                        "url": {
-                          "type": "string",
-                          "description": "Empty field."
-                        }
-                      }
-                    }
-                  },
                   "properties": {
                     "<sectionName>": {
                       "type": "object",
@@ -379,6 +369,9 @@
     },
     "/speech/sync": {
       "post": {
+        "tags": [
+          "Speech"
+        ],
         "operationId": "postSpeechSync",
         "summary": "Synthesize speech directly from text.",
         "description": "Good for time-critical applications. **Maximum runtime is 30 seconds**.\n### Caching\nTTS responses are globally cached to improve performance. You can set `Cache-Control` to `no-cache` to skip the cache.\nFollowing parameters are hashed as the cache key:\n  - text\n  - voice\n  - speed\n  - metadata\n  - effect\n  - bitrate\n  - sampling_rate\n  - output specified by the `Accept` header\n\nCache is missed when any of these parameters change.\n",
@@ -529,6 +522,16 @@
               }
             }
           },
+          "403": {
+            "description": "Authentication error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadAuth"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Voice not found.",
             "content": {
@@ -570,6 +573,14 @@
               "type": "string",
               "description": "Error message."
             }
+          }
+        }
+      },
+      "BadAuth": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Access denied. No authentication method can be found."
           }
         }
       }
