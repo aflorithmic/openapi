@@ -30,7 +30,7 @@
             ## Annotation system in scriptText
             ### Personalisation parameters/audience
             - Personalisation parameters can be used to dynamically replace content components within a script.
-            - E.g. "Today is {{weekday|a good day}}!"
+            - E.g. `Today is {{weekday|a good day}}!`
             ### Sections
             - A section is processed individually in later stages of Speech, and treated as a unit in Mastering process.
             - E.g. "<<sectionName::intro>>Hello!"
@@ -40,6 +40,7 @@
             ### Sound Effects
             - Inserts sound effect belonging to the sound template
             - E.g. "<<soundEffect::effect2>>Hurry up, the time is ticking!"
+            
             **Coming up!** Sound effects will soon be available globally, independent of the sound template applied.
             ### Media Files
             - Inserts a media file that was previously uploaded through /file/customaudio.
@@ -47,6 +48,7 @@
             ### SSML
             - Synthetic Speech Markup Language standard. Accepted tags vary across providers, so make sure to consult their documentation.
             - E.g. "<break time = '2s'/>"
+            
             **Coming up!** We're working on a SSML standard that mitigates all the discrepancies between the providers.
           required: true
           content:
