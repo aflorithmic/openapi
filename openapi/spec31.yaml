@@ -47,7 +47,7 @@
             - E.g. "Bruce Lee once said: <<media::bruce_lee_talking>>"
             ### SSML
             - Synthetic Speech Markup Language standard. Accepted tags vary across providers, so make sure to consult their documentation.
-            - E.g. "<break time = '2s'/>"
+            - E.g. `<break time = '2s'/>`
             
             **Coming up!** We're working on a SSML standard that mitigates all the discrepancies between the providers.
           required: true
