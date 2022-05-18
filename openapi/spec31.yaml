@@ -24,7 +24,8 @@
         tags:
           - Script
         operationId: postScript
-        summary: Create a Script resource. If referenced Script already exists, this method updates it.
+        summary: Create a Script resource.
+        description: If referenced Script already exists, this method updates it.
         requestBody:
           description: |
             ## Annotation system in scriptText
