@@ -9,12 +9,626 @@
     contact:
       name: Product Owner of API Audio
       email: linda@aflorithmic.ai
-      url: https://api.audio/
   
   servers:
   - url: https://v1.api.audio
-  paths:      
+  paths:
+    /script:
+      description: |
+        Content management service. Script resource is driven by [Annotation system](https://docs.api.audio/docs/annotation), through which text is sorted into sections, assigned to sound segments and integrated with sound effects and custom media files.
+
+        It's structured into project/module/script layers. Their combination generates a scriptId. Another way is to specify your own scriptId, this way all these layers have the name of scriptId. Each script can have its own versions. 
+
+        Each script section can be spoken by a separate speaker, have its own Speech configuration and be forced into a given length in Mastering.
+      post:
+        tags:
+          - Script
+        operationId: postScript
+        summary: Create a Script resource. If referenced Script already exists, this method updates it.
+        requestBody:
+          description: |
+            ## Annotation system in scriptText
+            ### Personalisation parameters/audience
+            - Personalisation parameters can be used to dynamically replace content components within a script.
+            - E.g. "Today is {{weekday|a good day}}!"
+            ### Sections
+            - A section is processed individually in later stages of Speech, and treated as a unit in Mastering process.
+            - E.g. "<<sectionName::intro>>Hello!"
+            ### Sound Segments
+            - Nests the content in a segment of a sound template. See available sound templates at https://library.api.audio/sounds.
+            - E.g. "<<soundSegment::intro>><<sectionName::intro>>Hello!"
+            ### Sound Effects
+            - Inserts sound effect belonging to the sound template
+            - E.g. "<<soundEffect::effect2>>Hurry up, the time is ticking!"
+            **Coming up!** Sound effects will soon be available globally, independent of the sound template applied.
+            ### Media Files
+            - Inserts a media file that was previously uploaded through /file/customaudio.
+            - E.g. "Bruce Lee once said: <<media::bruce_lee_talking>>"
+            ### SSML
+            - Synthetic Speech Markup Language standard. Accepted tags vary across providers, so make sure to consult their documentation.
+            - E.g. "<break time = '2s'/>"
+            **Coming up!** We're working on a SSML standard that mitigates all the discrepancies between the providers.
+          required: true
+          content:
+            application/json:
+              schema:
+                properties:
+                  scriptId:
+                    type: string
+                    description: Reference string to the Script. If specified, project, module and script names are the same as the script ID. Otherwise, it is generated and provided in the response.
+                  projectName:
+                    type: string
+                  moduleName:
+                    type: string
+                  scriptName:
+                    type: string
+                  scriptText:
+                    type: string
+                    example: |
+                      <<soundSegment::intro>>
+                      <<sectionName::intro>>
+                      This is the first section. Sound segment refers to the sound template that is applied in Mastering. I can use a parameter that I can specify later on the stage of Speech creation: today is {{weekday|a good day}}. If a weekday parameter is not specified, it will fallback to "a good day".
+                      <<soundSegment::main>>
+                      <<sectionName::main>>
+                      This is the main part of the script. Let's use a custom media file I have previously uploaded <<media::67a2b5c5-fc9c-4e12-8aa4-31d3831616fd>>
+                      <<soundSegment::outro>>
+                      <<sectionName::outro>>
+                      And this is the end with an effect <<soundEffect::effect1>>. The effect belongs to the applied sound template.
+                  version:
+                    type: string
+                    description: Default version is v0. You can create limitless versions of one scriptId, which is handy in cases of multilingual coverage, targeted content etc.
+        responses:
+          '200':
+            description: Script properly created/updated.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    orgId: 
+                      type: string
+                    projectName: 
+                      type: string
+                    moduleName: 
+                      type: string
+                    scriptName: 
+                      type: string
+                    scriptId: 
+                      type: string
+                    scriptText: 
+                      type: string
+                    version: 
+                      type: string
+                    availableVersions: 
+                      type: array
+                      items: 
+                        type: string
+                    estimatedLength: 
+                      type: string
+                    sections: 
+                      type: array
+                      items: 
+                        type: object
+                        properties: 
+                          name: 
+                            type: string
+                          text: 
+                            type: string
+                          text_original: 
+                            type: string
+                          order: 
+                            type: string
+                          orderString: 
+                            type: string
+                          parameters: 
+                            type: object
+                            properties:
+                              items:
+                                properties: {}
+                                additionalProperties: true
+                          soundEffect: 
+                            type: string
+                          soundSegment: 
+                            type: string
+                          media: 
+                            type: string
+                    creationDate: 
+                      type: string
+                    containsDictionary: 
+                      type: boolean
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+      get:
+        tags:
+          - Script
+        operationId: getScript
+        summary: List all scripts.
+        parameters:
+          - in: query 
+            name: projectName
+            schema:
+              type: string
+          - in: query 
+            name: moduleName
+            schema:
+              type: string
+          - in: query 
+            name: scriptName
+            schema:
+              type: string
+          - in: query 
+            name: scriptId
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Voices properly listed.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    scripts:
+                      type: object
+                      items:
+                        properties:
+                          orgId: 
+                            type: string
+                          projectName: 
+                            type: string
+                          moduleName: 
+                            type: string
+                          scriptName: 
+                            type: string
+                          scriptId: 
+                            type: string
+                          scriptText: 
+                            type: string
+                          version: 
+                            type: string
+                          availableVersions: 
+                            type: array
+                            items: 
+                              type: string
+                          estimatedLength: 
+                            type: string
+                          sections: 
+                            type: array
+                            items: 
+                              type: object
+                              properties: 
+                                name: 
+                                  type: string
+                                text: 
+                                  type: string
+                                text_original: 
+                                  type: string
+                                order: 
+                                  type: string
+                                orderString: 
+                                  type: string
+                                parameters: 
+                                  type: object
+                                  properties:
+                                    items:
+                                      properties: {}
+                                      additionalProperties: true
+                                soundEffect: 
+                                  type: string
+                                soundSegment: 
+                                  type: string
+                                media: 
+                                  type: string
+                          creationDate: 
+                            type: string
+                          containsDictionary: 
+                            type: boolean
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+
+    /script/{scriptId}:
+      get:
+        tags:
+          - Script
+        operationId: getScriptId
+        summary: Get data of referenced Script.
+        parameters:
+          - in: path 
+            name: scriptId
+            required: true
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Script found.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    orgId: 
+                      type: string
+                    projectName: 
+                      type: string
+                    moduleName: 
+                      type: string
+                    scriptName: 
+                      type: string
+                    scriptId: 
+                      type: string
+                    scriptText: 
+                      type: string
+                    version: 
+                      type: string
+                    availableVersions: 
+                      type: array
+                      items: 
+                        type: string
+                    estimatedLength: 
+                      type: string
+                    sections: 
+                      type: array
+                      items: 
+                        type: object
+                        properties: 
+                          name: 
+                            type: string
+                          text: 
+                            type: string
+                          text_original: 
+                            type: string
+                          order: 
+                            type: string
+                          orderString: 
+                            type: string
+                          parameters: 
+                            type: object
+                            properties:
+                              items:
+                                properties: {}
+                                additionalProperties: true
+                          soundEffect: 
+                            type: string
+                          soundSegment: 
+                            type: string
+                          media: 
+                            type: string
+                    creationDate: 
+                      type: string
+                    containsDictionary: 
+                      type: boolean
+    
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: Script not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+      delete:
+        tags:
+          - Script
+        operationId: deleteScript
+        summary: Delete script.
+        parameters:
+          - in: path
+            name: scriptId
+            required: true
+            schema:
+              type: string
+          - in: query 
+            name: version
+            description: Version of the Script to be deleted.
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Script successfully removed.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    message:
+                      type: string
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: Script not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+
+    /voice:
+      description: |
+        Voice library service. Library page: https://library.api.audio/.
+      get:
+        tags:
+          - Voice
+        operationId: getVoice
+        summary: List all available voices.
+        parameters:
+          - in: query 
+            name: limit
+            description: Max. amount of items to be returned
+            schema:
+              type: number
+              format: integer
+          - in: query
+            name: offset
+            description: | 
+              Pagination offset. Should be incremented by the value of `itemsLimit` with each request.
+            schema:
+              type: number
+              format: integer
+          - in: query
+            name: sort
+            description: | 
+              Sort order of items by an attribute.
+            schema:
+              type: string
+          - in: query
+            name: language
+            description: | 
+              Language of the voice.
+            schema:
+              type: string
+          - in: query
+            name: languageCode
+            description: | 
+              ISO language code of the voice, e.g. en-US
+            schema:
+              type: string
+          - in: query 
+            name: accent
+            description: Accent of the voice.
+            schema:
+              type: string
+          - in: query 
+            name: gender
+            description: Gender of the voice.
+            schema:
+              type: string
+          - in: query 
+            name: ageBracket
+            description: Age bracket of the voice.
+            schema:
+              type: string
+              enum:
+                - child
+                - adult
+                - senior
+          - in: query
+            name: tags
+            description: | 
+              Tags of the voice. Multiple tags separated by comma are accepted.
+            schema:
+              type: string
+          - in: query
+            name: industryExamples
+            description: | 
+              Multiple tags separated by comma are accepted.
+            schema:
+              type: string
+          - in: query
+            name: timePerformance
+            description: | 
+              Relative response time.
+            schema:
+              type: string
+              enum:
+                - fast
+                - medium
+                - slow
+          - in: query
+            name: provider
+            description: | 
+              Provider of the voice.
+            schema:
+              type: string
+              enum:
+                - msnr
+                - polly
+                - azure
+                - google
+                - ibm
+                - retro
+                - vocalid
+                - resemble
+        responses:
+          '200':
+            description: Voices properly listed.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    voices:
+                      type: object
+                      properties:
+                        alias: 
+                          type: string
+                        tier: 
+                          type: string
+                        accent: 
+                          type: string
+                        language: 
+                          type: string
+                        provider: 
+                          type: string
+                        providerFullName: 
+                          type: string
+                        tags: 
+                          type: array
+                          items: 
+                            type: string
+                        industryExamples: 
+                          type: array
+                          items: 
+                            type: string
+                        supportedStyles: 
+                          type: array
+                          items:
+                            type: string
+                        longSoftDescription: 
+                          type: string
+                        languageCode: 
+                          type: string
+                        ageBracket: 
+                          type: string
+                        voiceId: 
+                          type: string
+                        gender: 
+                          type: string
+                        sectionCharacterLimit: 
+                          type: string
+                        timePerformance: 
+                          type: string
+                        neuralStandard: 
+                          type: string
+                        audioSample: 
+                          type: string
+                        picture: 
+                          type: string
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+
+    /voice/name/{name}:
+      get:
+        tags:
+          - Voice
+        operationId: getVoiceName
+        summary: Get data on voice.
+        parameters:
+          - in: path 
+            name: name
+            required: true
+            description: Alias or original voice ID.
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Voice found.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    alias: 
+                      type: string
+                    tier: 
+                      type: string
+                    accent: 
+                      type: string
+                    language: 
+                      type: string
+                    provider: 
+                      type: string
+                    providerFullName: 
+                      type: string
+                    tags: 
+                      type: array
+                      items: 
+                        type: string
+                    industryExamples: 
+                      type: array
+                      items: 
+                        type: string
+                    supportedStyles: 
+                      type: array
+                      items:
+                        type: string
+                    longSoftDescription: 
+                      type: string
+                    languageCode: 
+                      type: string
+                    ageBracket: 
+                      type: string
+                    voiceId: 
+                      type: string
+                    gender: 
+                      type: string
+                    sectionCharacterLimit: 
+                      type: string
+                    timePerformance: 
+                      type: string
+                    neuralStandard: 
+                      type: string
+                    audioSample: 
+                      type: string
+                    picture: 
+                      type: string
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: Voice not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
     /speech:
+      description: |
+        TTS service. Speech resource is responsible for creating TTS out of Script resource, or, in case of /speech/sync endpoint, direct TTS synthesis out of text.
+  
+        Any voice available in the Voice Library can be used to synthesize speech per Script section.
+      
+        If your Script contains text to be synthesised, it is necessary to synthesise it here before moving on to Mastering.
       post:
         tags:
           - Speech
