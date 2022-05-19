@@ -26,7 +26,7 @@
         "summary": "Create a Script resource.",
         "description": "If referenced Script already exists, this method updates it.",
         "requestBody": {
-          "description": "## Annotation system in scriptText\n### Personalisation parameters/audience\n- Personalisation parameters can be used to dynamically replace content components within a script.\n- E.g. `Today is {{weekday|a good day}}!`\n### Sections\n- A section is processed individually in later stages of Speech, and treated as a unit in Mastering process.\n- E.g. \"<<sectionName::intro>>Hello!\"\n### Sound Segments\n- Nests the content in a segment of a sound template. See available sound templates at https://library.api.audio/sounds.\n- E.g. \"<<soundSegment::intro>><<sectionName::intro>>Hello!\"\n### Sound Effects\n- Inserts sound effect belonging to the sound template\n- E.g. \"<<soundEffect::effect2>>Hurry up, the time is ticking!\"\n\n**Coming up!** Sound effects will soon be available globally, independent of the sound template applied.\n### Media Files\n- Inserts a media file that was previously uploaded through /file/customaudio.\n- E.g. \"Bruce Lee once said: <<media::bruce_lee_talking>>\"\n### SSML\n- Synthetic Speech Markup Language standard. Accepted tags vary across providers, so make sure to consult their documentation.\n- E.g. `<break time = '2s'/>`\n\n**Coming up!** We're working on a SSML standard that mitigates all the discrepancies between the providers.\n",
+          "description": "## Annotation system in scriptText\n### Personalisation parameters/audience\n- Personalisation parameters can be used to dynamically replace content components within a script.\n- E.g. `Today is {{weekday|a good day}}!`\n### Sections\n- A section is processed individually in later stages of Speech, and treated as a unit in Mastering process.\n- E.g. \"<<sectionName::intro>>Hello!\"\n### Sound Segments\n- Nests the content in a segment of a sound template. See available sound templates at https://library.api.audio/sounds.\n- E.g. \"<<soundSegment::intro>><<sectionName::intro>>Hello!\"\n### Sound Effects\n- Inserts sound effect belonging to the sound template\n- E.g. \"<<soundEffect::effect2>>Hurry up, the time is ticking!\"\n\n**Coming up!** Sound effects will soon be available globally, independent of the sound template applied.\n### Media Files\n- Insert a placeholder for a media file that is specified on Mastering stage. Media files are uploaded through /file/customaudio/uploadurl.\n- E.g. \"Bruce Lee once said: <<media::bruce_lee_talking>>\"\n### SSML\n- Synthetic Speech Markup Language standard. Accepted tags vary across providers, so make sure to consult their documentation.\n- E.g. `<break time = '2s'/>`\n\n**Coming up!** We're working on a SSML standard that mitigates all the discrepancies between the providers.\n",
           "required": true,
           "content": {
             "application/json": {
@@ -47,7 +47,7 @@
                   },
                   "scriptText": {
                     "type": "string",
-                    "example": "<<soundSegment::intro>>\n<<sectionName::intro>>\nThis is the first section. Sound segment refers to the sound template that is applied in Mastering. I can use a parameter that I can specify later on the stage of Speech creation: today is {{weekday|a good day}}. If a weekday parameter is not specified, it will fallback to \"a good day\".\n<<soundSegment::main>>\n<<sectionName::main>>\nThis is the main part of the script. Let's use a custom media file I have previously uploaded <<media::67a2b5c5-fc9c-4e12-8aa4-31d3831616fd>>\n<<soundSegment::outro>>\n<<sectionName::outro>>\nAnd this is the end with an effect <<soundEffect::effect1>>. The effect belongs to the applied sound template.\n"
+                    "example": "<<soundSegment::intro>>\n<<sectionName::intro>>\nThis is the first section. Sound segment refers to the sound template that is applied in Mastering. I can use a parameter that I can specify later on the stage of Speech creation: today is {{weekday|a good day}}. If a weekday parameter is not specified, it will fallback to \"a good day\".\n<<soundSegment::main>>\n<<sectionName::main>>\nThis is the main part of the script. Let's use a custom media file <<media::myfile>>. I can insert here any of the files I have uploaded, by referencing \"myfile\" to the mediaId during Mastering process. \n<<soundSegment::outro>>\n<<sectionName::outro>>\nAnd this is the end with an effect <<soundEffect::effect1>>. The effect belongs to the applied sound template.\n"
                   },
                   "version": {
                     "type": "string",
@@ -1547,7 +1547,7 @@
                   "mediaVolumeTrim": {
                     "type": "number",
                     "format": "float",
-                    "description": "Trim the volume of uploaded media files (in dB). This attribute has a valid range of -12 to 12 dB."
+                    "description": "Trim the volume of the media files used (in dB). This attribute has a valid range of -12 to 12 dB."
                   },
                   "connectors": {
                     "type": "array",
@@ -1769,6 +1769,158 @@
                           }
                         }
                       }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Error messages explain the problem.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authentication error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadAuth"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/file/customaudio/uploadurl": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "operationId": "uploadFile",
+        "summary": "Upload a file to use in <<media::alias>> Script annotation.",
+        "description": "This endpoint returns `mediaId`` that is **the reference to the file** and the upload URL. In order to upload your file, make a PUT request to the returned URL, with your file as payload. \n\nThink of the alias part of <<media::alias>> annotation as the reference to the **placeholder** in the Script. You link this placeholder to the actual file by using `mediaFiles` field in POST /mastering request, e.g. `mediaFiles={\"alias\": \"f22e7250\"}`\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "filename",
+            "description": "Name of the file. Not a reference!",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "description": "Tags to link to the file, separated by comma, e.g. \"recording,happy\"",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Upload URL returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "mediaId": {
+                      "type": "string",
+                      "description": "Reference to the file."
+                    },
+                    "fileUploadUrl": {
+                      "type": "string",
+                      "description": "Make a PUT request to this URL with your file in the payload in order to upload it."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Error messages explain the problem.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authentication error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadAuth"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/file/customaudio": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "operationId": "listFiles",
+        "summary": "List available media files.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "mediaId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "description": "List only files that have given tag.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Media files listed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "savedAudioFiles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "filename": {
+                            "type": "string"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "mediaId": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "totalCount": {
+                      "type": "number",
+                      "format": "integer"
                     }
                   }
                 }
