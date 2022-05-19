@@ -1318,7 +1318,7 @@
         operationId: uploadFile
         summary: Upload a file to use in <<media::alias>> Script annotation.
         description: |
-          This endpoint returns `mediaId`` that is **the reference to the file** and the upload URL. In order to upload your file, make a PUT request to the returned URL, with your file as payload. 
+          This endpoint returns `mediaId` that is **the reference to the file** and the upload URL. In order to upload your file, make a PUT request to the returned URL, with your file as payload. 
 
           Think of the alias part of <<media::alias>> annotation as the reference to the **placeholder** in the Script. You link this placeholder to the actual file by using `mediaFiles` field in POST /mastering request, e.g. `mediaFiles={"alias": "f22e7250"}`
         parameters:
