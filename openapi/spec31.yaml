@@ -1049,7 +1049,269 @@
               application/json:
                 schema:
                   $ref: '#/components/schemas/BadRequest'
-  
+
+    /mastering:
+      description: |
+        Mastering service, combines Speech, Media and Sound templates into a high-quality audio track.
+      post:
+        tags:
+          - Mastering
+        operationId: postMastering
+        summary: Create a mastered file.
+        description: Keep in mind that in order to successfuly create a mastered file for a Script, Speech files must be generated for that Script beforehand, given it contains any content for synthesis.
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                properties:
+                  scriptId:
+                    type: string
+                    description: Reference to the Script to master.
+                  version:
+                    type: string
+                    description: Version of the Script.
+                  audience:
+                    type: object
+                    description: |
+                      Object referencing the audience used in Speech production.
+                    properties: {}
+                    additionalProperties: true
+                  soundTemplate:
+                    type: string
+                    description: | 
+                      Reference to the sound template to be applied. Available sound templates: https://library.api.audio/sounds
+                  masteringPreset:
+                    type: string
+                    description: The mastering preset to use, this enables features such as sidechain compression 'i.e. ducking'. GET /mastering-presets to see available presets. 
+                  public:
+                    type: boolean
+                    default: false
+                    description: |
+                      Whether the mastered file should be accessible by anyone in the internet. Use it at your own risk.
+                  vast:
+                    type: boolean
+                    default: false
+                    description: Create a VAST file of your mastered file. The vast flag only works if public is True.
+                  endFormat:
+                    type: string
+                    default: "mp3"
+                    enum:
+                      - "wav"
+                      - "mp3"
+                      - "flac" 
+                      - "ogg" 
+                      - "mp3_very_low" 
+                      - "mp3_low"
+                      - "mp3_medium"
+                      - "mp3_high"
+                      - "mp3_very_high"
+                    description: Format of the output file. Very low - very high refers to the quality of mp3 (bitrate).
+                  forceLength:
+                    type: number
+                    format: float
+                    description: Force the total length of the mastered file to the amount of seconds.
+                  sectionProperties:
+                    description: Force length of particular Script sections. 
+                    type: object
+                    items:
+                      properties:
+                        <sectionName>:
+                          type: object
+                          items:
+                            properties:
+                              endAt:
+                                type: number
+                                format: float
+                                description: Timemark in seconds at which the section is supposed to end.
+                              justify:
+                                type: string
+                                enum:
+                                  - "flex-start"
+                                  - "centre"
+                                  - "flex-end"
+                                description: |
+                                  Flex-start (default): any gap between speech/effect/media ending and the next section starting is placed at the end of the current section. Speech will start at the very beginning together with the sound.
+                                                                    
+                                  Centre: Gaps are placed evenly at the start and end of the current section. Speech will float in the middle of the section.
+
+                                  Flex-end: The gap is placed at the start of the current section. Speech is pushed to the end of the section, with sound starting at the beginning.
+
+                                  Exceeding content is faded out.
+                  matchVoice:
+                    description: Levels the volume of synthetic speech with the volume of media files.
+                    type: boolean
+                    default: false
+                  channels:
+                    type: number
+                    format: integer
+                    description: 1 for mono, 2 for stereo
+                    default: 2
+                  mediaVolumeTrim:
+                    type: number
+                    format: float
+                    description: Trim the volume of uploaded media files (in dB). This attribute has a valid range of -12 to 12 dB.
+                  connectors:
+                    type: array
+                    description: |
+                      List of dicts specifying configuration for particular 3rd party connection. For guidelines in context of supported 3rd party application, see [connectors documentation](https://docs.api.audio/docs/what-are-connectors).
+                    items:
+                      type: object
+                      items:
+                        properties: {}
+                        additionalProperties: true
+                  share:
+                    type: boolean
+                    description: |
+                      If you would like to have a sharable link created with your audio file, use this flag. If you put `share: True` the response will have `shareUrl` parameter returned. (Note: If you put this flag, your private files will be converted to public files.)
+                    default: false
+                required:
+                  - scriptId
+        responses:
+          '200':
+            description: Mastering created succesfully.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    message:
+                      type: string
+                    url:
+                      type: string
+                    warnings:
+                      type: string
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+      get:
+        tags:
+          - Mastering
+        operationId: getMastering
+        summary: Retrieve a mastered file.
+        parameters:
+          - in: query 
+            name: scriptId
+            description: Reference to the Script from which the file was produced.
+            required: true
+            schema:
+              type: string
+          - in: query
+            name: version
+            description: Version of the Script.
+            schema:
+              type: string
+          - in: query
+            name: scriptParameters
+            description: |
+              Reference to specified audience in POST /speech. E.g. for audience `{"username": "Michael", "weekday": "Sunday"}` the parameters would be `username=Michael&weekday=Sunday` (not case-sensitive).
+            schema:
+              type: object
+              additionalProperties: true
+            style: form
+            explode: true
+          - in: query
+            name: public
+            description: Whether the produced file is public.
+            schema:
+              type: boolean
+          - in: query
+            name: vast
+            description: Whether to retrieve the VAST file.
+            schema:
+              type: boolean
+          - in: query
+            name: endFormat
+            description: The format in which the file was produced.
+            schema:
+              type: string
+              default: "mp3"
+              enum:
+                - "wav"
+                - "mp3"
+                - "flac" 
+                - "ogg" 
+                - "mp3_very_low" 
+                - "mp3_low"
+                - "mp3_medium"
+                - "mp3_high"
+                - "mp3_very_high"
+        responses:
+          '200':
+            description: Mastering file found.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    script:
+                      type: string
+                    version:
+                      type: string
+                    url:
+                      type: string
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: Not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+    /mastering-presets:
+      get:
+        tags:
+          - Mastering
+        operationId: getMasteringPresets
+        summary: List all available mastering presets.
+        responses:
+          '200':
+            description: Presets properly listed.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    presets:
+                      type: array
+                      items:
+                        type: object
+                        items:
+                          properties:
+                            name:
+                              type: string
+                              description: Name of the preset.
+                            description:
+                              type: string
+                              description: Description of the preset.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
   components:
     securitySchemes:
       ApiKeyAuth:
