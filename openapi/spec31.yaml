@@ -180,8 +180,9 @@
                 schema:
                   properties:
                     scripts:
-                      type: object
+                      type: array
                       items:
+                        type: object
                         properties:
                           orgId: 
                             type: string
@@ -484,52 +485,54 @@
                 schema:
                   properties:
                     voices:
-                      type: object
-                      properties:
-                        alias: 
-                          type: string
-                        tier: 
-                          type: string
-                        accent: 
-                          type: string
-                        language: 
-                          type: string
-                        provider: 
-                          type: string
-                        providerFullName: 
-                          type: string
-                        tags: 
-                          type: array
-                          items: 
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          alias: 
                             type: string
-                        industryExamples: 
-                          type: array
-                          items: 
+                          tier: 
                             type: string
-                        supportedStyles: 
-                          type: array
-                          items:
+                          accent: 
                             type: string
-                        longSoftDescription: 
-                          type: string
-                        languageCode: 
-                          type: string
-                        ageBracket: 
-                          type: string
-                        voiceId: 
-                          type: string
-                        gender: 
-                          type: string
-                        sectionCharacterLimit: 
-                          type: string
-                        timePerformance: 
-                          type: string
-                        neuralStandard: 
-                          type: string
-                        audioSample: 
-                          type: string
-                        picture: 
-                          type: string
+                          language: 
+                            type: string
+                          provider: 
+                            type: string
+                          providerFullName: 
+                            type: string
+                          tags: 
+                            type: array
+                            items: 
+                              type: string
+                          industryExamples: 
+                            type: array
+                            items: 
+                              type: string
+                          supportedStyles: 
+                            type: array
+                            items:
+                              type: string
+                          longSoftDescription: 
+                            type: string
+                          languageCode: 
+                            type: string
+                          ageBracket: 
+                            type: string
+                          voiceId: 
+                            type: string
+                          gender: 
+                            type: string
+                          sectionCharacterLimit: 
+                            type: string
+                          timePerformance: 
+                            type: string
+                          neuralStandard: 
+                            type: string
+                          audioSample: 
+                            type: string
+                          picture: 
+                            type: string
           '400':
             description: Bad request. Error messages explain the problem.
             content:
@@ -1114,30 +1117,28 @@
                   sectionProperties:
                     description: Force length of particular Script sections. 
                     type: object
-                    items:
-                      properties:
-                        <sectionName>:
-                          type: object
-                          items:
-                            properties:
-                              endAt:
-                                type: number
-                                format: float
-                                description: Timemark in seconds at which the section is supposed to end.
-                              justify:
-                                type: string
-                                enum:
-                                  - "flex-start"
-                                  - "centre"
-                                  - "flex-end"
-                                description: |
-                                  Flex-start (default): any gap between speech/effect/media ending and the next section starting is placed at the end of the current section. Speech will start at the very beginning together with the sound.
-                                                                    
-                                  Centre: Gaps are placed evenly at the start and end of the current section. Speech will float in the middle of the section.
+                    properties:
+                      <sectionName>:
+                        type: object
+                        properties:
+                          endAt:
+                            type: number
+                            format: float
+                            description: Timemark in seconds at which the section is supposed to end.
+                          justify:
+                            type: string
+                            enum:
+                              - "flex-start"
+                              - "centre"
+                              - "flex-end"
+                            description: |
+                              Flex-start (default): any gap between speech/effect/media ending and the next section starting is placed at the end of the current section. Speech will start at the very beginning together with the sound.
+                                                                
+                              Centre: Gaps are placed evenly at the start and end of the current section. Speech will float in the middle of the section.
 
-                                  Flex-end: The gap is placed at the start of the current section. Speech is pushed to the end of the section, with sound starting at the beginning.
+                              Flex-end: The gap is placed at the start of the current section. Speech is pushed to the end of the section, with sound starting at the beginning.
 
-                                  Exceeding content is faded out.
+                              Exceeding content is faded out.
                   matchVoice:
                     description: Levels the volume of synthetic speech with the volume of media files.
                     type: boolean
@@ -1157,9 +1158,8 @@
                       List of dicts specifying configuration for particular 3rd party connection. For guidelines in context of supported 3rd party application, see [connectors documentation](https://docs.api.audio/docs/what-are-connectors).
                     items:
                       type: object
-                      items:
-                        properties: {}
-                        additionalProperties: true
+                      properties: {}
+                      additionalProperties: true
                   share:
                     type: boolean
                     description: |
@@ -1292,14 +1292,13 @@
                       type: array
                       items:
                         type: object
-                        items:
-                          properties:
-                            name:
-                              type: string
-                              description: Name of the preset.
-                            description:
-                              type: string
-                              description: Description of the preset.
+                        properties:
+                          name:
+                            type: string
+                            description: Name of the preset.
+                          description:
+                            type: string
+                            description: Description of the preset.
           '400':
             description: Bad request. Error messages explain the problem.
             content:
