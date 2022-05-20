@@ -207,7 +207,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Voices properly listed.",
+            "description": "Scripts properly listed.",
             "content": {
               "application/json": {
                 "schema": {
