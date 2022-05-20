@@ -173,7 +173,7 @@
         "tags": [
           "Script"
         ],
-        "operationId": "getScript",
+        "operationId": "listScripts",
         "summary": "List all scripts.",
         "parameters": [
           {
@@ -541,7 +541,7 @@
         "tags": [
           "Voice"
         ],
-        "operationId": "getVoice",
+        "operationId": "listVoices",
         "summary": "List all available voices.",
         "parameters": [
           {
