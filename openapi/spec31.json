@@ -1949,6 +1949,174 @@
           }
         }
       }
+    },
+    "/diction": {
+      "get": {
+        "tags": [
+          "Diction"
+        ],
+        "operationId": "listDicts",
+        "summary": "List available dictionaries.",
+        "responses": {
+          "200": {
+            "description": "Dictionaries listed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "dictId": {
+                        "type": "string"
+                      },
+                      "lang": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Error messages explain the problem.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authentication error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadAuth"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/diction/list/{dict_id}": {
+      "get": {
+        "tags": [
+          "Diction"
+        ],
+        "operationId": "listDictElements",
+        "summary": "List dictionary elements",
+        "parameters": [
+          {
+            "name": "dict_id",
+            "in": "path",
+            "description": "The id of the dictionary, e.g. de_boy_names",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dictionaries listed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "<dict_id>": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "Words contained in the dictionary."
+                      }
+                    },
+                    "lang": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Error messages explain the problem.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authentication error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadAuth"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/diction/list_types": {
+      "get": {
+        "tags": [
+          "Diction"
+        ],
+        "operationId": "listDictTypes",
+        "summary": "List dictionary types",
+        "responses": {
+          "200": {
+            "description": "Dictionaries listed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "types": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Error messages explain the problem.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authentication error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadAuth"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
