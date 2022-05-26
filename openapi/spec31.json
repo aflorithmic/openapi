@@ -3,7 +3,7 @@
   "info": {
     "title": "api.audio",
     "version": "v1",
-    "description": "Super cool audio api. INSERT GOOD DESCRIPTION HERE.\n",
+    "description": "API.audio - the global backbone of audio production. Infrastructure for AI driven synthetic audio creation. Easily integrate audio into your product or allow end users to create high quality audio.",
     "termsOfService": "https://www.aflorithmic.ai/terms-of-use",
     "contact": {
       "name": "Product Owner of API Audio",
