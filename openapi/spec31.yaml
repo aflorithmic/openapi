@@ -12,6 +12,7 @@
   
   servers:
   - url: https://v1.api.audio
+  
   paths:
     /script:
       description: |
@@ -20,6 +21,30 @@
         It's structured into project/module/script layers. Their combination generates a scriptId. Another way is to specify your own scriptId, this way all these layers have the name of scriptId. Each script can have its own versions. 
 
         Each script section can be spoken by a separate speaker, have its own Speech configuration and be forced into a given length in Mastering.
+      options:
+        tags:
+          - Script
+        operationId: optScript
+        summary: Available paths and description
+        responses:
+          '200':
+            description: Options returned successfuly.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Options'
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
       post:
         tags:
           - Script
@@ -384,6 +409,30 @@
     /voice:
       description: |
         Voice library service. Library page: https://library.api.audio/.
+      options:
+        tags:
+          - Voice
+        operationId: optVoice
+        summary: Available paths and description
+        responses:
+          '200':
+            description: Options returned successfuly.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Options'
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
       get:
         tags:
           - Voice
@@ -635,6 +684,30 @@
         Any voice available in the Voice Library can be used to synthesize speech per Script section.
       
         If your Script contains text to be synthesised, it is necessary to synthesise it here before moving on to Mastering.
+      options:
+        tags:
+          - Speech
+        operationId: optSpeech
+        summary: Available paths and description
+        responses:
+          '200':
+            description: Options returned successfuly.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Options'
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
       post:
         tags:
           - Speech
@@ -1056,6 +1129,30 @@
     /mastering:
       description: |
         Mastering service, combines Speech, Media and Sound templates into a high-quality audio track.
+      options:
+        tags:
+          - Mastering
+        operationId: optMastering
+        summary: Available paths and description
+        responses:
+          '200':
+            description: Options returned successfuly.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Options'
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
       post:
         tags:
           - Mastering
@@ -1409,6 +1506,31 @@
                 schema:
                   $ref: '#/components/schemas/BadAuth'      
     /diction:
+      description: Pronunciation dictionaries contain IPA records of words to ensure correct pronunciation independently of TTS' language.
+      options:
+        tags:
+          - Diction
+        operationId: optDiction
+        summary: Available paths and description
+        responses:
+          '200':
+            description: Options returned successfuly.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Options'
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
       get:
         tags:
           - Diction
@@ -1441,6 +1563,7 @@
               application/json:
                 schema:
                   $ref: '#/components/schemas/BadAuth' 
+    
     /diction/list/{dict_id}:
       get:
         tags:
@@ -1482,6 +1605,7 @@
               application/json:
                 schema:
                   $ref: '#/components/schemas/BadAuth'
+    
     /diction/list_types:
       get:
         tags:
@@ -1511,6 +1635,123 @@
               application/json:
                 schema:
                   $ref: '#/components/schemas/BadAuth'
+    
+    /orchestrator:
+      description: Orchestrator service brings all the fundamental API services (Script, Speech, Mastering) down to one request.
+      options:
+        tags:
+          - Orchestrator
+        operationId: optOrchestrator
+        summary: Available paths and description
+        responses:
+          '200':
+            description: Options returned successfuly.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Options'
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+        
+    /orchestrator/create_audio:
+      post:
+        tags:
+          - Orchestrator
+        operationId: postOrchestratorCreateAudio
+        summary: Creates TTS speech request and adds a sound template to it through mastering.
+        requestBody:
+          content:
+            application/json:
+              schema:
+                properties:
+                  scriptText:
+                    type: string
+                    description: Script text to synthesise. This is passed to Script service, so Script annotations are supported.
+                  voice:
+                    type: string
+                    description: Name of the voice to be used. Can be found in GET /voice
+                  soundTemplate:
+                    type: string
+                    description: Name of the sound template to be used. Can be found in GET /sound/template
+
+        responses:
+          '200':
+            description: Audio created.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    message:
+                      type: string
+                    url:
+                      type: string
+                    warnings:
+                      type: string
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+    
+    /orchestrator/media_with_sound:
+      post:
+        tags:
+          - Orchestrator
+        operationId: postOrchestratorMediaWithSound
+        summary: Combines media with a sound template.
+        requestBody:
+          content:
+            application/json:
+              schema:
+                properties:
+                  mediaId:
+                    type: string
+                    description: ID of the media file. It is received after uploading and can be found in GET /file/customaudio
+                  soundTemplate:
+                    type: string
+                    description: Name of the sound template. Can be found in GET /sound/template
+        responses:
+          '200':
+            description: Audio created.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    message:
+                      type: string
+                    url:
+                      type: string
+                    warnings:
+                      type: string
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
                
   components:
     securitySchemes:
@@ -1518,6 +1759,7 @@
         type: apiKey
         name: x-api-key
         in: header
+    
     schemas:
       BadRequest:
         properties:
@@ -1531,6 +1773,14 @@
           message:
             type: string
             example: Access denied. No authentication method can be found.
+      Options:
+        properties:
+          description:
+            type: string
+          paths:
+            type: object
+            properties: {}
+            additionalProperties: true
   
   security:
     - ApiKeyAuth: []
