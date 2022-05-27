@@ -17,7 +17,7 @@
   ],
   "paths": {
     "/script": {
-      "description": "Content management service. Script resource is driven by [Annotation system](https://docs.api.audio/docs/annotation), through which text is sorted into sections, assigned to sound segments and integrated with sound effects and custom media files.\n\nIt's structured into project/module/script layers. Their combination generates a scriptId. Another way is to specify your own scriptId, this way all these layers have the name of scriptId. Each script can have its own versions. \n\nEach script section can be spoken by a separate speaker, have its own Speech configuration and be forced into a given length in Mastering.\n",
+      "description": "## Script resource is designed for the purpose of content management.\n\n### Annotation\n\nScript resource is driven by [Annotation system](https://docs.api.audio/docs/annotation), through which text is sorted into sections, assigned to sound segments and integrated with sound effects and custom media files.\n\n### Script sections\n\nEach script section can be spoken by a separate speaker, have its own Speech configuration or be forced into a given length in Mastering.\n\n### SSML\n\nWe're working on unified SSML system compatible with all the voices in our library. Until then, please make sure that the tags used in your Script are supported by the original provider of the voice.\n\n### Project-Module-Script structure\n\nScripts are nested in modules, modules are nested in projects. The combination of these names generates a scriptId, with which the Script is referenced in other parts of the API. \n\n### Custom scriptId\n\nAnother way is to specify your own scriptId - this way all these layers have the name of scriptId. \n\n###Script versioning\n\nEach script can have its own versions, that can easily be switched in later Speech or Mastering process.\n",
       "options": {
         "tags": [
           "Script"
@@ -63,9 +63,8 @@
         ],
         "operationId": "postScript",
         "summary": "Create a Script resource.",
-        "description": "If referenced Script already exists, this method updates it.",
+        "description": "### Note: If referenced Script already exists, this method updates it.\n## Annotation system in `scriptText`\n### Personalisation parameters/audience\n- Personalisation parameters can be used to dynamically replace content components within a script.\n- E.g. `\"Today is {{weekday|a good day}}!\"`\n### Sections\n- A section is processed individually in later stages of Speech, and treated as a unit in Mastering process.\n- E.g. `\"<<sectionName::intro>>Hello!\"`\n### Sound Segments\n- Nests the content in a segment of a sound template. See available sound templates at https://library.api.audio/sounds.\n- E.g. `\"<<soundSegment::intro>><<sectionName::intro>>Hello!\"`\n### Sound Effects\n- Inserts sound effect belonging to the sound template\n- E.g. `\"<<soundEffect::effect2>>Hurry up, the time is ticking!\"`\n\n**Coming up!** Sound effects will soon be available globally, independent of the sound template applied.\n### Media Files\n- Insert a placeholder for a media file that is specified on Mastering stage. Media files are uploaded through /file/customaudio/uploadurl.\n- E.g. `\"Bruce Lee once said: <<media::bruce_lee_talking>>\"`\n### SSML\n- Synthetic Speech Markup Language standard. Accepted tags vary across providers, so make sure to consult their documentation.\n- E.g. `<break time = '2s'/>`\n\n**Coming up!** We're working on a SSML standard that mitigates all the discrepancies between the providers.\n",
         "requestBody": {
-          "description": "## Annotation system in scriptText\n### Personalisation parameters/audience\n- Personalisation parameters can be used to dynamically replace content components within a script.\n- E.g. `Today is {{weekday|a good day}}!`\n### Sections\n- A section is processed individually in later stages of Speech, and treated as a unit in Mastering process.\n- E.g. \"<<sectionName::intro>>Hello!\"\n### Sound Segments\n- Nests the content in a segment of a sound template. See available sound templates at https://library.api.audio/sounds.\n- E.g. \"<<soundSegment::intro>><<sectionName::intro>>Hello!\"\n### Sound Effects\n- Inserts sound effect belonging to the sound template\n- E.g. \"<<soundEffect::effect2>>Hurry up, the time is ticking!\"\n\n**Coming up!** Sound effects will soon be available globally, independent of the sound template applied.\n### Media Files\n- Insert a placeholder for a media file that is specified on Mastering stage. Media files are uploaded through /file/customaudio/uploadurl.\n- E.g. \"Bruce Lee once said: <<media::bruce_lee_talking>>\"\n### SSML\n- Synthetic Speech Markup Language standard. Accepted tags vary across providers, so make sure to consult their documentation.\n- E.g. `<break time = '2s'/>`\n\n**Coming up!** We're working on a SSML standard that mitigates all the discrepancies between the providers.\n",
           "required": true,
           "content": {
             "application/json": {
@@ -575,7 +574,7 @@
       }
     },
     "/voice": {
-      "description": "Voice library service. Library page: https://library.api.audio/.\n",
+      "description": "##Voice library service. Library page: https://library.api.audio/.\n",
       "options": {
         "tags": [
           "Voice"
@@ -980,7 +979,7 @@
       }
     },
     "/speech": {
-      "description": "TTS service. Speech resource is responsible for creating TTS out of Script resource, or, in case of /speech/sync endpoint, direct TTS synthesis out of text.\n\nAny voice available in the Voice Library can be used to synthesize speech per Script section.\n\nIf your Script contains text to be synthesised, it is necessary to synthesise it here before moving on to Mastering.\n",
+      "description": "##TTS service. \nSpeech resource is responsible for creating TTS out of **Script** resource, or, in case of /speech/sync endpoint, direct TTS synthesis out of text.\n\nAny voice available in the **Voice Library** can be used to synthesize speech per **Script** section.\n\nIf your **Script** contains text to be synthesised, it is necessary to synthesise it here before moving on to **Mastering**.\n",
       "options": {
         "tags": [
           "Speech"
@@ -1558,7 +1557,7 @@
       }
     },
     "/mastering": {
-      "description": "Mastering service, combines Speech, Media and Sound templates into a high-quality audio track.\n",
+      "description": "##Mastering service combines Speech, Media and Sound templates into a high-quality audio track.\n",
       "options": {
         "tags": [
           "Mastering"
@@ -1955,7 +1954,7 @@
       }
     },
     "/sound": {
-      "description": "Sound library service. More at https://library.api.audio/sounds.",
+      "description": "##Sound library service. More at https://library.api.audio/sounds.\n",
       "options": {
         "tags": [
           "Sound"
@@ -2655,7 +2654,7 @@
       }
     },
     "/orchestrator": {
-      "description": "Orchestrator service brings all the fundamental API services (Script, Speech, Mastering) down to one request.",
+      "description": "##Orchestrator service brings all the fundamental API services (Script, Speech, Mastering) down to one request.\n",
       "options": {
         "tags": [
           "Orchestrator"
@@ -2702,7 +2701,7 @@
           "Orchestrator"
         ],
         "operationId": "postOrchestratorCreateAudio",
-        "summary": "Creates TTS speech request and adds a sound template to it through mastering.",
+        "summary": "Create audio with one request.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2775,7 +2774,7 @@
           "Orchestrator"
         ],
         "operationId": "postOrchestratorMediaWithSound",
-        "summary": "Combines media with a sound template.",
+        "summary": "Combine media with a sound template.",
         "requestBody": {
           "content": {
             "application/json": {
