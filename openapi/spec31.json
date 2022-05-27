@@ -3,7 +3,7 @@
   "info": {
     "title": "api.audio",
     "version": "v1",
-    "description": "API.audio - the global backbone of audio production. Infrastructure for AI driven synthetic audio creation. Easily integrate audio into your product or allow end users to create high quality audio.",
+    "description": "API.audio - the global backbone of audio production. Infrastructure for AI driven synthetic audio creation. Easily integrate audio into your product or allow end users to create high quality audio. \n",
     "termsOfService": "https://www.aflorithmic.ai/terms-of-use",
     "contact": {
       "name": "Product Owner of API Audio",
@@ -1924,6 +1924,282 @@
                             "description": "Description of the preset."
                           }
                         }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Error messages explain the problem.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authentication error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadAuth"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sound": {
+      "description": "Sound library service. More at https://library.api.audio/sounds.",
+      "options": {
+        "tags": [
+          "Sound"
+        ],
+        "operationId": "optSound",
+        "summary": "Available paths and description",
+        "responses": {
+          "200": {
+            "description": "Options returned successfuly.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Options"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Error messages explain the problem.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authentication error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadAuth"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sound/template": {
+      "get": {
+        "tags": [
+          "Sound"
+        ],
+        "operationId": "getSoundTemplate",
+        "summary": "List available Sound Templates",
+        "description": "Multiple values can be specified in tags and collections through comma separation e.g. `?tags=intense,minimal`\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "genre",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "electronic",
+                "acoustic",
+                "atmospheric",
+                "abstract",
+                "rock"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "tempo",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "down",
+                "mid",
+                "up"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "collections",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "newscast",
+                "commercial",
+                "education",
+                "fitness",
+                "kids entertainment",
+                "ready set audio ad"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "intense",
+                "minimal",
+                "reflective",
+                "melodic",
+                "happy",
+                "nostalgic",
+                "focus",
+                "energetic",
+                "uplifting",
+                "active",
+                "relaxed",
+                "ambience",
+                "mysterious",
+                "positive",
+                "informative",
+                "workout",
+                "work",
+                "meditation",
+                "travel",
+                "acoustic",
+                "playful",
+                "uplifitin"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sound templates listed succesfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "templates": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "isElastic": {
+                            "type": "boolean",
+                            "description": "An elastic template seemlessly shrinks and grows to any length."
+                          },
+                          "collections": {
+                            "type": "array",
+                            "description": "Suggested use cases.",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "sample": {
+                            "type": "string",
+                            "description": "Audio sample of the Sound Template."
+                          },
+                          "contents": {
+                            "type": "array",
+                            "description": "Segments and sound effects available in the Sound Template.",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "genre": {
+                            "type": "string"
+                          },
+                          "templateName": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "tempo": {
+                            "type": "string"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "soundTemplateId": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Error messages explain the problem.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authentication error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadAuth"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sound/parameter": {
+      "get": {
+        "tags": [
+          "Sound"
+        ],
+        "operationId": "getSoundParameter",
+        "summary": "List all parameters in available templates.",
+        "responses": {
+          "200": {
+            "description": "Parameters properly listed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "genre": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "tempo": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "collections": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
                       }
                     }
                   }
