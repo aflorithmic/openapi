@@ -1774,16 +1774,9 @@
             content:
               application/json:
                 schema:
-                  properties:
-                    <dict_id>:
-                      type: array
-                      items:
-                        type: string
-                        description: Words contained in the dictionary.
-                    lang:
-                      type: string
-                    type:
-                      type: string
+                  items:
+                    type: string
+                    description: Dictionary IDs containing searched word.
           '400':
             description: Bad request. Error messages explain the problem.
             content:
@@ -1826,6 +1819,56 @@
               application/json:
                 schema:
                   $ref: '#/components/schemas/BadAuth'
+    
+    /diction/search/{word}/{language}:
+      get:
+        tags:
+          - Diction
+        operationId: searchDict
+        summary: Search dictionaries through word and language
+        parameters:
+          - name: word
+            in: path
+            description: The word to look for in dictionaries
+            required: true
+            schema:
+              type: string
+          - name: language
+            in: path
+            description: |
+              The first part of ISO language code, e.g. `de` for German, `en` for English etc.
+            required: true
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Dictionaries listed.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    <dict_id>:
+                      type: array
+                      items:
+                        type: string
+                        description: Words contained in the dictionary.
+                    lang:
+                      type: string
+                    type:
+                      type: string
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+      
     
     /orchestrator:
       description: Orchestrator service brings all the fundamental API services (Script, Speech, Mastering) down to one request.
