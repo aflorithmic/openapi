@@ -1,0 +1,26 @@
+## Configuration blocks
+
+config_blocks:
+  only_tags: &only_tags
+    filters:
+      branches:
+        ignore: /.*/
+      tags:
+        only: /^v[0-9]+(\.[0-9]+)*$/
+
+version: 2.1
+
+jobs:
+  update:
+    docker:
+      - image: cimg/base
+    steps:
+      - checkout
+      - run: curl --location --request PUT 'https://dash.readme.com/api/v1/api-specification/6290d77179fba9009e611e37' --form '=@"openapi/spec31.yaml"' -u "elo:"
+
+workflows:
+  update-reference:
+    jobs:
+      - update:
+          <<: *only_tags
+
