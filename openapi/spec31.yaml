@@ -14,7 +14,7 @@
   - url: https://v1.api.audio
   
   paths:
-    /script:
+    /script: 
       description: |
         ## Script resource is designed for the purpose of content management.
 
@@ -306,6 +306,24 @@
             required: true
             schema:
               type: string
+          - in: query 
+            name: version
+            required: false
+            description: Version of the script.
+            schema:
+              type: string
+          - in: query 
+            name: preview
+            required: false
+            description: Pronunciation dictionary preview - shows phoneme injections.
+            schema:
+              type: string
+          - in: query 
+            name: lang
+            required: false
+            description: The first part of ISO language code, e.g. en for english.
+            schema:
+              type: string
         responses:
           '200':
             description: Script found.
@@ -383,6 +401,40 @@
               application/json:
                 schema:
                   $ref: '#/components/schemas/BadRequest'
+
+    /script/random:
+      get:
+        tags:
+          - Script
+        operationId: getRandomScript
+        summary: Return a script with the dictionary highlighting applied.
+        parameters:
+          - in: query 
+            name: category
+            required: true
+            schema:
+              type: string
+              default: FunFact
+        responses:
+          '200':
+            description: Script found.
+            content:
+              application/json:
+                schema:
+                  type: string
+                  description: Random text.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
       delete:
         tags:
           - Script
