@@ -16,7 +16,7 @@ jobs:
       - image: cimg/base:current
     steps:
       - checkout
-      - run: curl --location --request PUT 'https://dash.readme.com/api/v1/api-specification/6290d77179fba9009e611e37' --form '=@"openapi/spec31.yaml"' -u "$README_KEY:"
+      - run: curl -X PUT -T "openapi/spec31.yaml" -u "$README_KEY:" "https://dash.readme.com/api/v1/api-specification/6290d77179fba9009e611e37"
 
 workflows:
   update-reference:
