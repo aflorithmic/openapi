@@ -450,7 +450,7 @@
         tags:
           - Script
         operationId: getRandomScript
-        summary: Return a script with the dictionary highlighting applied.
+        summary: Generate a random script.
         parameters:
           - in: query 
             name: category
