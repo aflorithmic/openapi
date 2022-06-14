@@ -19,7 +19,7 @@ jobs:
       - run: 
           command: |
             cd openapi
-            curl --request PUT --url https://dash.readme.com/api/v1/api-specification/6290d77179fba9009e611e37 --header 'Accept: application/json' --header 'Authorization: Basic ${README_KEY}' --header 'Content-Type: multipart/form-data' --form spec=@spec31.yaml
+            curl --request PUT --url https://dash.readme.com/api/v1/api-specification/6290d77179fba9009e611e37 --header 'Accept: application/json' --header 'Authorization: Basic '${README_KEY}'' --header 'Content-Type: multipart/form-data' --form spec=@spec31.yaml
 
 workflows:
   update-reference:
