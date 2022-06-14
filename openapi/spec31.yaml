@@ -299,7 +299,7 @@
         tags:
           - Script
         operationId: getScriptId
-        summary: Get data of referenced Script.
+        summary: Get Script data.
         parameters:
           - in: path 
             name: scriptId
@@ -401,40 +401,6 @@
               application/json:
                 schema:
                   $ref: '#/components/schemas/BadRequest'
-
-    /script/random:
-      get:
-        tags:
-          - Script
-        operationId: getRandomScript
-        summary: Return a script with the dictionary highlighting applied.
-        parameters:
-          - in: query 
-            name: category
-            required: true
-            schema:
-              type: string
-              default: FunFact
-        responses:
-          '200':
-            description: Script found.
-            content:
-              application/json:
-                schema:
-                  type: string
-                  description: Random text.
-          '400':
-            description: Bad request. Error messages explain the problem.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/BadRequest'
-          '403':
-            description: Authentication error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/BadAuth'
       delete:
         tags:
           - Script
@@ -478,6 +444,40 @@
               application/json:
                 schema:
                   $ref: '#/components/schemas/BadRequest'
+
+    /script/random:
+      get:
+        tags:
+          - Script
+        operationId: getRandomScript
+        summary: Return a script with the dictionary highlighting applied.
+        parameters:
+          - in: query 
+            name: category
+            required: true
+            schema:
+              type: string
+              default: FunFact
+        responses:
+          '200':
+            description: Script found.
+            content:
+              application/json:
+                schema:
+                  type: string
+                  description: Random text.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
 
     /voice:
       description: |
