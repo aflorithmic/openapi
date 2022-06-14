@@ -1280,7 +1280,7 @@
                       - "mp3_medium"
                       - "mp3_high"
                       - "mp3_very_high"
-                      - “mp3_alexa”
+                      - "mp3_alexa"
                     description: Format of the output file. Very low - very high refers to the quality of mp3 (bitrate).
                   forceLength:
                     type: number
