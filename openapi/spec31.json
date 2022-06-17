@@ -1059,7 +1059,7 @@
       }
     },
     "/speech": {
-      "description": "##TTS service. \nSpeech resource is responsible for creating TTS out of **Script** resource, or, in case of /speech/sync endpoint, direct TTS synthesis out of text.\n\nAny voice available in the **Voice Library** can be used to synthesize speech per **Script** section.\n\nIf your **Script** contains text to be synthesised, it is necessary to synthesise it here before moving on to **Mastering**.\n",
+      "description": "testTTS service. Speech resource is responsible for creating TTS out of Script resource, or, in case of /speech/sync endpoint, direct TTS synthesis out of text.\n\nAny voice available in the Voice Library can be used to synthesize speech per Script section.\n\nIf your Script contains text to be synthesised, it is necessary to synthesise it here before moving on to Mastering.\n",
       "options": {
         "tags": [
           "Speech"
@@ -1918,7 +1918,7 @@
                 "mp3_medium",
                 "mp3_high",
                 "mp3_very_high",
-                "“mp3_alexa”"
+                "\u201cmp3_alexa\u201d"
               ]
             }
           }
