@@ -847,6 +847,9 @@
                   useDictionary:
                     type: boolean
                     description: Whether to apply phoneme injections specified in Script.
+                  useTextNormalizer:
+                    type: boolean
+                    description: Applies text normalization, which can help resolve grammatical errors with TTS pronunciations, for example 11:12 Uhr -> 11 Uhr 12. Note - this only works for german voices at present.
                 required:
                   - scriptId
         responses:
