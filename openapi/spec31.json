@@ -24,7 +24,12 @@
           "Introduction"
         ],
         "operationId": "optIntroduction",
-        "summary": "Introduction to the API"
+        "summary": "Introduction to the API",
+        "responses": {
+          "200": {
+            "description": "Introduction returned successfuly."
+          }
+        }
       }
     },
     "/authentication": {
@@ -34,7 +39,12 @@
           "Authentication"
         ],
         "operationId": "optAuth",
-        "summary": "How to authenticate to our API"
+        "summary": "How to authenticate to our API",
+        "responses": {
+          "200": {
+            "description": "Authentication returned successfuly."
+          }
+        }
       }
     },
     "/script": {
