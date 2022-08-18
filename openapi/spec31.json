@@ -17,36 +17,6 @@
     }
   ],
   "paths": {
-    "/introduction": {
-      "description": "## API Reference\nAPI.audio is organised around [REST](https://en.wikipedia.org/wiki/Representational_State_Transfer). \nOur API has predictable resource-oriented URLs, accepts [form-encoded](https://en.wikipedia.org/wiki/POST_(HTTP)#Use_for_submitting_web_forms)\nrequest bodies, returns [JSON-encoded](http://www.json.org/) responses, and uses standard \nHTTP response codes, authentication, and verbs.\n\nYou can use API.Audio in sandbox, which doesn't affect your live data or \nbilling. We recommend using sandbox for testing purposes. \nThe API key you use to authenticate the request determines whether the request is live mode or sandbox mode.\n",
-      "options": {
-        "tags": [
-          "Introduction"
-        ],
-        "operationId": "optIntroduction",
-        "summary": "Introduction to the API",
-        "responses": {
-          "200": {
-            "description": "Introduction returned successfuly."
-          }
-        }
-      }
-    },
-    "/authentication": {
-      "description": "## Authentication\nYou can see more about our authentication here - and how to retrieve an [API key](https://docs.api.audio/docs/retrieve-your-api-key) \n",
-      "options": {
-        "tags": [
-          "Authentication"
-        ],
-        "operationId": "optAuth",
-        "summary": "How to authenticate to our API",
-        "responses": {
-          "200": {
-            "description": "Authentication returned successfuly."
-          }
-        }
-      }
-    },
     "/script": {
       "description": "## Script (Content Management API)\nThis is an object representing your content in API.audio. Often for producing beautiful text-to-audio you'll need to write some text or import text from another system\nYou can also [retrieve all the Scripts](https://docs.api.audio/reference/listscripts) you've created.\n\nEach script has a unique *scriptId* which you can reference. \n\n### Annotation\n\nScript resource is driven by [Annotation system](https://docs.api.audio/docs/annotation), through which text is sorted into sections, assigned to sound segments and integrated with sound effects and custom media files.\n\n### Script sections\n\nEach script section can be spoken by a separate speaker, have its own Speech configuration or be forced into a given length in Mastering.\n\n### SSML\n\nWe're working on unified SSML system compatible with all the voices in our library. Until then, please make sure that the tags used in your Script are supported by the original provider of the voice.\n\n### Project-Module-Script structure\n\nA problem that you may have is that you may want to store some structure of your projects. For example \"where do I store all of my scripts\"? Well you can store them in modules and store modules in projects. \n\nScripts are nested in modules, modules are nested in projects. The combination of these names generates a scriptId, with which the Script is referenced in other parts of the API. \n\n### Custom scriptId\n\nAnother way is to specify your own scriptId - this way all these layers have the name of scriptId. \n\n###Script versioning\n\nEach script can have its own versions, that can easily be switched in later Speech or Mastering process.\n",
       "options": {
