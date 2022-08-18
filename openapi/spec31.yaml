@@ -26,6 +26,11 @@
        You can use API.Audio in sandbox, which doesn't affect your live data or 
        billing. We recommend using sandbox for testing purposes. 
        The API key you use to authenticate the request determines whether the request is live mode or sandbox mode.
+    /authentication:
+      description: |
+        ## Authentication
+        You can see more about our authentication here - and how to retrieve an [API key](https://docs.api.audio/docs/retrieve-your-api-key) 
+
     /script: 
       description: |
         ## Script 
