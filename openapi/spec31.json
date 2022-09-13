@@ -2931,7 +2931,7 @@
           "Users"
         ],
         "operationId": "postUsers",
-        "summary": "Create a User-.",
+        "summary": "Create a User.",
         "requestBody": {
           "required": true,
           "content": {
@@ -3194,7 +3194,8 @@
           "Users"
         ],
         "operationId": "updateUser",
-        "summary": "Update User data. Cannot update ID.",
+        "summary": "Update User data.",
+        "description": "Cannot update ID.",
         "parameters": [
           {
             "in": "path",
@@ -3675,7 +3676,8 @@
           "Files"
         ],
         "operationId": "postFile",
-        "summary": "Uploads file. Must be a valid wav format, less than 5 MB. Cannot create a file that already exists for given utterance. For that use PUT method.",
+        "summary": "Uploads file.",
+        "description": "Must be a valid wav format, less than 5 MB. Cannot create a file that already exists for given utterance. For that use PUT method.",
         "parameters": [
           {
             "in": "path",
@@ -3937,7 +3939,7 @@
       "description": "CRUD verticals resource. Create, read, update and delete verticals and their content (utterances). \nVerticals belong to organisation. Public verticals available to everybody start with `public_aflr`.\nThese are not available straight away, first they need to be added to a users' `availableVerticals` field.\n",
       "get": {
         "tags": [
-          "Verticals"
+          "VC - Verticals"
         ],
         "operationId": "listVerticals",
         "summary": "List all verticals.",
@@ -3999,7 +4001,7 @@
       },
       "post": {
         "tags": [
-          "Verticals"
+          "VC - Verticals"
         ],
         "operationId": "postVertical",
         "summary": "Creates a vertical.",
@@ -4094,7 +4096,7 @@
       ],
       "get": {
         "tags": [
-          "Verticals"
+          "VC - Verticals"
         ],
         "operationId": "getVertical",
         "summary": "Read vertical data.",
@@ -4211,10 +4213,11 @@
       },
       "post": {
         "tags": [
-          "Verticals"
+          "VC - Verticals"
         ],
         "operationId": "postVerticalUtterances",
-        "summary": "Add utterances to the vertical. Cannot add existing utterances. To be able to add and overwrite use PATCH method.",
+        "summary": "Add utterances to the vertical.",
+        "description": "Cannot add existing utterances. To be able to add and overwrite use PATCH method.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -4280,7 +4283,7 @@
       },
       "patch": {
         "tags": [
-          "Verticals"
+          "VC - Verticals"
         ],
         "operationId": "patchVertical",
         "summary": "Updates a vertical.",
@@ -4364,7 +4367,7 @@
       },
       "delete": {
         "tags": [
-          "Verticals"
+          "VC - Verticals"
         ],
         "operationId": "deleteVertical",
         "summary": "Deletes the vertical.",
@@ -4426,7 +4429,7 @@
       ],
       "get": {
         "tags": [
-          "Verticals"
+          "VC - Verticals"
         ],
         "operationId": "getVerticalUtterance",
         "summary": "Reads the utterance data.",
@@ -4487,7 +4490,7 @@
       },
       "patch": {
         "tags": [
-          "Verticals"
+          "VC - Verticals"
         ],
         "operationId": "updateVerticalUtterance",
         "summary": "Updates the utterance data.",
@@ -4552,7 +4555,7 @@
       },
       "delete": {
         "tags": [
-          "Verticals"
+          "VC - Verticals"
         ],
         "operationId": "deleteVerticalUtterance",
         "summary": "Deletes the utterance data.",
@@ -4597,7 +4600,7 @@
       "description": "## CRUD models resource. List, retrieve and delete models. Models are linked to users.\n",
       "get": {
         "tags": [
-          "Models"
+          "VC - Models"
         ],
         "operationId": "listModels",
         "parameters": [
@@ -4721,7 +4724,7 @@
     "/ulvc2/models/{userId}/{modelId}": {
       "delete": {
         "tags": [
-          "Models"
+          "VC - Models"
         ],
         "operationId": "deleteModel",
         "summary": "Deletes Model.",
@@ -4783,10 +4786,11 @@
     "/ulvc2/recording/{userId}": {
       "get": {
         "tags": [
-          "Recording"
+          "VC - Recording"
         ],
         "operationId": "guideUser",
-        "summary": "Returns utterances to be recorded. Looks at `selectedVerticals` of the user and subtracts already recorded utterances.",
+        "summary": "Returns utterances to be recorded.",
+        "description": "Looks at `selectedVerticals` of the user and subtracts already recorded utterances.",
         "parameters": [
           {
             "in": "path",
@@ -4908,7 +4912,7 @@
     "/ulvc2/feedback/{userId}": {
       "get": {
         "tags": [
-          "QA Feedback"
+          "VC - QA Feedback"
         ],
         "operationId": "getFeedback",
         "summary": "Get QA feedback for recorded files.",
@@ -5071,10 +5075,11 @@
           }
         ],
         "tags": [
-          "training"
+          "VC - Training"
         ],
         "operationId": "postTraining",
-        "summary": "Initiate training of a TTS model for given user. There must be a minimum of 100 files recorded that've passed the QA by the specified user.",
+        "summary": "Initiate training of a TTS model for given user.",
+        "description": "There must be a minimum of 100 files recorded that've passed the QA by the specified user.",
         "requestBody": {
           "content": {
             "application/json": {
