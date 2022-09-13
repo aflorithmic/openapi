@@ -2082,7 +2082,7 @@
         tags:
           - Users
         operationId: postUsers
-        summary: Create a User-.
+        summary: Create a User.
         requestBody:
           required: true
           content:
