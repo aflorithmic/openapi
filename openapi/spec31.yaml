@@ -1736,7 +1736,7 @@
       get:
         tags:
           - File
-        operationId: listFiles
+        operationId: listMediaFiles
         summary: List available media files.
         parameters:
           - in: query 
@@ -2074,7 +2074,1448 @@
               application/json:
                 schema:
                   $ref: '#/components/schemas/BadAuth'
-               
+    /ulvc2/users: 
+      description: |
+        ## CRUD users resource. List, create, update and delete users. Files and trained models must belong to a user.
+      
+      post:
+        tags:
+          - Users
+        operationId: postUsers
+        summary: Create a User.
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    description: Unique identifier.
+                  name:
+                    type: string
+                    description: User's name, auxilary.
+                  gender:
+                    type: string
+                    description: male / female / non-binary
+                  availableVerticals:
+                    type: array
+                    items: 
+                      type: string
+                    description: Verticals that the user has access to. 
+                  selectedVerticals:
+                    type: array
+                    items: 
+                      type: string
+                    description: Verticals that are selected for users to record. Selected vertical must be included in availableVerticals.
+                  metadata:
+                    type: object
+                    description: Metadata object with custom fields.
+                  voiceCloningEnabled:
+                    type: boolean
+                    description: Access switch.
+                required: 
+                  - id
+        responses:
+          '201':
+            description: User properly created.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+      get: 
+        tags:
+          - Users
+        operationId: listUsers
+        summary: Lists users belonging to the organisation.
+        responses: 
+          '200':
+            description: Users properly listed
+            content:
+              application/json: 
+                schema: 
+                  properties:
+                    data: 
+                      type: array
+                      items: 
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            description: Unique identifier.
+                          name:
+                            type: string
+                            description: User's name, auxilary.
+                          gender:
+                            type: string
+                            description: male / female / non-binary
+                          availableVerticals:
+                            type: array
+                            items: 
+                              type: string
+                            description: Verticals that the user has access to. 
+                          selectedVerticals:
+                            type: array
+                            items: 
+                              type: string
+                            description: Verticals that are selected for users to record. Selected vertical must be included in availableVerticals.
+                          metadata:
+                            type: object
+                            description: Metadata object with custom fields.
+                          voiceCloningEnabled:
+                            type: boolean
+                            description: Access switch.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+        
+    /ulvc2/users/{userId}:
+      get:
+        tags:
+          - Users
+        operationId: getUser
+        summary: Get user data.
+        parameters:
+          - in: path 
+            name: userId
+            required: true
+            schema:
+              type: string
+        responses:
+          '200':
+            description: User exists and data retrieved.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Unique identifier.
+                        name:
+                          type: string
+                          description: User's name, auxilary.
+                        gender:
+                          type: string
+                          description: male / female / non-binary
+                        availableVerticals:
+                          type: array
+                          items: 
+                            type: string
+                          description: Verticals that the user has access to. 
+                        selectedVerticals:
+                          type: array
+                          items: 
+                            type: string
+                          description: Verticals that are selected for users to record. Selected vertical must be included in availableVerticals.
+                        metadata:
+                          type: object
+                          description: Metadata object with custom fields.
+                        voiceCloningEnabled:
+                          type: boolean
+                          description: Access switch.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: User not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+
+      patch:
+        tags:
+          - Users
+        operationId: updateUser
+        summary: Update User data. Cannot update ID.
+        parameters:
+          - in: path 
+            name: userId
+            required: true
+            schema:
+              type: string
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                properties:
+                  name:
+                    type: string
+                    description: User's name, auxilary.
+                  gender:
+                    type: string
+                    description: male / female / non-binary
+                  availableVerticals:
+                    type: array
+                    items: 
+                      type: string
+                    description: Verticals that the user has access to. 
+                  selectedVerticals:
+                    type: array
+                    items: 
+                      type: string
+                    description: Verticals that are selected for users to record. Selected vertical must be included in availableVerticals.
+                  metadata:
+                    type: object
+                    description: Metadata object with custom fields.
+                  voiceCloningEnabled:
+                    type: boolean
+                    description: Access switch.
+        responses:
+          '200':
+            description: Script found.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Unique identifier.
+                        name:
+                          type: string
+                          description: User's name, auxilary.
+                        gender:
+                          type: string
+                        availableVerticals:
+                          type: array
+                          items: 
+                            type: string
+                          description: Verticals that the user has access to. 
+                        selectedVerticals:
+                          type: array
+                          items: 
+                            type: string
+                          description: Verticals that are selected for users to record. Selected vertical must be included in availableVerticals.
+                        createdAt:
+                          type: string
+                          description: Unix time of user creation.
+                        metadata:
+                          type: object
+                          description: Metadata object with custom fields.
+                        voiceCloningEnabled:
+                          type: boolean
+    
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: User not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+
+      delete:
+        tags:
+          - Users
+        operationId: deleteUser
+        summary: Deletes User and all their files.
+        parameters:
+          - in: path
+            name: userId
+            required: true
+            schema:
+              type: string
+        responses:
+          '200':
+            description: User successfully removed.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: User not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+
+    /ulvc2/files:
+      description: |
+        CRUD files resource. Upload, download and list files. Only valid wav files are accepted up to 5 MB.
+      
+      get:
+        tags:
+          - Files
+        operationId: listVCFiles
+        summary: List all files of all users.
+        responses:
+          '200':
+            description: Files properly listed.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    data: 
+                      type: array
+                      items: 
+                        type: object
+                        properties: 
+                          userId: 
+                            type: string
+                          filesCount: 
+                            type: integer
+                            format: int32
+                          recordedUtterances: 
+                            type: array
+                            items: 
+                              type: string
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+
+    /ulvc2/files/{userId}:
+      get:
+        tags:
+          - Files
+        operationId: listUserFiles
+        summary: List all files of the user.
+        parameters:
+          - in: path
+            name: userId
+            required: true
+            schema:
+              type: string 
+        responses:
+          '200':
+            description: Files properly listed.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    data: 
+                      type: object
+                      properties: 
+                        userId: 
+                          type: string
+                        filesCount: 
+                          type: integer
+                          format: int32
+                        recordedUtterances: 
+                          type: array
+                          items: 
+                            type: string
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: User not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+      delete:
+        tags:
+          - Files
+        operationId: deleteUserFiles
+        summary: Deletes all files of the user.
+        parameters:
+          - in: path
+            name: userId
+            required: true
+            schema:
+              type: string 
+        responses:
+          '200':
+            description: Files deleted.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: User not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+
+
+    /ulvc2/files/{userId}/{verticalId}/{utteranceId}:
+      get:
+        tags:
+          - Files
+        operationId: getFile
+        summary: Downloads file.
+        parameters:
+          - in: path 
+            name: userId
+            required: true
+            schema:
+              type: string
+          - in: path 
+            name: verticalId
+            required: true
+            description: ID of the vertical to which the read utterance belongs.
+            schema:
+              type: string
+          - in: path 
+            name: utteranceId
+            required: true
+            description: ID of the utterance read in the recording.
+            schema:
+              type: string
+          - in: header
+            name: Accept
+            description: Specifies the format of the output audio.
+            required: true
+            schema:
+              type: string
+              enum:
+                - audio/wav
+        responses:
+          '200':
+            description: File found and returned.
+            content:
+              audio/wav:
+                schema:
+                  type: string
+                  format: binary
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: File not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+
+      post:
+        tags:
+          - Files
+        operationId: postFile
+        summary: Uploads file. Must be a valid wav format, less than 5 MB. Cannot create a file that already exists for given utterance. For that use PUT method.
+        parameters:
+          - in: path 
+            name: userId
+            required: true
+            schema:
+              type: string
+          - in: path
+            name: verticalId
+            required: true
+            description: ID of the vertical to which the read utterance belongs.
+            schema:
+              type: string
+          - in: path 
+            name: utteranceId
+            required: true
+            description: ID of the utterance read in the recording.
+            schema:
+              type: string
+          - in: header
+            name: Content-Type
+            description: Specifies the format of the input audio.
+            required: true
+            schema:
+              type: string
+              enum:
+                - audio/wav
+        requestBody: 
+          content: 
+            audio/wav:
+              schema:
+                type: string
+                format: binary
+        responses:
+          '201':
+            description: File uploaded and created.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: User/vertical/utterance not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+
+      put:
+        tags:
+          - Files
+        operationId: putFile
+        summary: Updates file.
+        parameters:
+          - in: path 
+            name: userId
+            required: true
+            schema:
+              type: string
+          - in: path 
+            name: verticalId
+            required: true
+            description: ID of the vertical to which the read utterance belongs.
+            schema:
+              type: string
+          - in: path 
+            name: utteranceId
+            required: true
+            description: ID of the utterance read in the recording.
+            schema:
+              type: string
+          - in: header
+            name: Content-Type
+            description: Specifies the format of the input audio.
+            required: true
+            schema:
+              type: string
+              enum:
+                - audio/wav
+        requestBody: 
+          content: 
+            audio/wav:
+              schema:
+                type: string
+                format: binary
+        responses:
+          '200':
+            description: File found and updated.
+            content:
+              audio/wav:
+                schema:
+                  type: string
+                  format: binary
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: File not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+
+      delete:
+        tags:
+          - Files
+        operationId: deleteFile
+        summary: Deletes file.
+        parameters:
+          - in: path 
+            name: userId
+            required: true
+            schema:
+              type: string
+          - in: path 
+            name: verticalId
+            required: true
+            description: ID of the vertical to which the read utterance belongs.
+            schema:
+              type: string
+          - in: path 
+            name: utteranceId
+            required: true
+            description: ID of the utterance read in the recording.
+            schema:
+              type: string
+        responses:
+          '200':
+            description: File found and deleted.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: File not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+
+    /ulvc2/verticals:
+      description: |
+        CRUD verticals resource. Create, read, update and delete verticals and their content (utterances). 
+        Verticals belong to organisation. Public verticals available to everybody start with `public_aflr`.
+        These are not available straight away, first they need to be added to a users' `availableVerticals` field.
+      
+      get:
+        tags:
+          - Verticals
+        operationId: listVerticals
+        summary: List all verticals.
+        responses:
+          '200':
+            description: Verticals properly listed.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    data: 
+                      type: array
+                      items: 
+                        type: object
+                        properties:
+                          id: 
+                            type: string
+                          languageCode: 
+                            type: string
+                          utteranceCount: 
+                            type: integer
+                            format: int32
+                          createdAt: 
+                            type: integer
+                            format: int32
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+
+      post:
+        tags:
+          - Verticals
+        operationId: postVertical
+        summary: Creates a vertical.
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                properties: 
+                  id: 
+                    type: string
+                    description: Unique identifier, no longer than 100 characters.
+                  languageCode: 
+                    type: string
+                    description: Two character language code compliant with ISO standard, e.g. "en" for English.
+                  description: 
+                    type: string
+                  tags: 
+                    type: array
+                    items: 
+                      type: string
+                  alias: 
+                    type: string
+                  utterances: 
+                    type: array
+                    items: 
+                      type: object
+                      properties: 
+                        id: 
+                          type: string
+                          description: Unique identifier of the utterance. No more than 100 characters.
+                        text: 
+                          type: string
+                          description: No more than 500 characters.
+                required: 
+                  - id
+                  - languageCode
+                  - utterances
+        responses:
+          '200':
+            description: Vertical properly created.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+
+    /ulvc2/verticals/{verticalId}:
+      parameters:
+        - in: path 
+          name: verticalId
+          required: true
+          schema:
+            type: string
+      
+      get:
+        tags:
+          - Verticals
+        operationId: getVertical
+        summary: Read vertical data.
+        parameters:
+          - in: query 
+            name: showUtterances
+            required: false
+            schema:
+              type: boolean
+          - in: query 
+            name: quantity
+            required: false
+            description: Number of utterances to return
+            schema:
+              type: integer
+          - in: query 
+            name: offset
+            required: false
+            description: Use together with `quantity` to paginate through utterances. If quantity is 10 in one request, the offset should be 10 in the next one.
+            schema:
+              type: string
+        responses:
+          '200':
+            description: File found and returned.
+            content: 
+              application/json: 
+                schema: 
+                  properties: 
+                    id: 
+                      type: string
+                      description: Unique identifier.
+                    languageCode: 
+                      type: string
+                      description: Two character language code compliant with ISO standard, e.g. "en" for English.
+                    description: 
+                      type: string
+                    tags: 
+                      type: array
+                      items: 
+                        type: string
+                    alias: 
+                      type: string
+                    utterancesCount:
+                      type: integer
+                    utterances: 
+                      type: array
+                      description: Shown only when `showUtterances` is set to true.
+                      items: 
+                        type: object
+                        properties: 
+                          id: 
+                            type: string
+                            description: Unique identifier of the utterance.
+                          text: 
+                            type: string
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: Vertical not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'   
+      
+      post:
+        tags:
+          - Verticals
+        operationId: postVerticalUtterances
+        summary: Add utterances to the vertical. Cannot add existing utterances. To be able to add and overwrite use PATCH method.
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                properties: 
+                  utterances: 
+                    type: array
+                    description: Shown only when `showUtterances` is set to true.
+                    items: 
+                      type: object
+                      properties: 
+                        id: 
+                          type: string
+                          description: Unique identifier of the utterance. No more than 100 characters.
+                        text: 
+                          type: string
+                          description: No more than 500 characters.
+        responses: 
+          '200':
+            description: Utterances added.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: Vertical not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'   
+      patch: 
+        tags:
+          - Verticals
+        operationId: patchVertical
+        summary: Updates a vertical.
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                properties: 
+                  languageCode: 
+                    type: string
+                    description: Two character language code compliant with ISO standard, e.g. "en" for English.
+                  description: 
+                    type: string
+                  tags: 
+                    type: array
+                    items: 
+                      type: string
+                  alias: 
+                    type: string
+                  utterances: 
+                    type: array
+                    items: 
+                      type: object
+                      properties: 
+                        id: 
+                          type: string
+                          description: Unique identifier of the utterance. No more than 100 characters.
+                        text: 
+                          type: string
+                          description: No more than 500 characters.
+        responses:
+          '200':
+            description: Vertical properly updated.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: Vertical not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'     
+
+      delete: 
+        tags:
+          - Verticals
+        operationId: deleteVertical
+        summary: Deletes the vertical.
+        responses:
+          '200':
+            description: Vertical properly deleted.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: Vertical not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+
+    /ulvc2/verticals/{verticalId}/{utteranceId}:
+      parameters:
+        - in: path 
+          name: verticalId
+          required: true
+          schema:
+            type: string
+        - in: path 
+          name: utteranceId
+          required: true
+          schema:
+            type: string
+
+      get: 
+        tags:
+          - Verticals
+        operationId: getVerticalUtterance
+        summary: Reads the utterance data.
+        responses:
+          '200':
+            description: Utterance properly deleted.
+            content:
+              application/json: 
+                schema:
+                  properties:
+                    data: 
+                      type: object
+                      properties: 
+                        id: 
+                          type: string
+                        text: 
+                          type: string
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: Utterance not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+      
+      patch: 
+        tags: 
+          - Verticals
+        operationId: updateVerticalUtterance
+        summary: Updates the utterance data.
+        requestBody: 
+          content:
+            application/json: 
+              schema:
+                properties:
+                  data: 
+                    type: object
+                    properties: 
+                      id: 
+                        type: string
+                        description: Unique identifier. No more than 100 characters.
+                      text: 
+                        type: string
+                        description: No more than 500 characters.
+          
+        responses:
+          '200':
+            description: Utterance properly updated.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: Utterance not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+        
+      delete:
+        tags:
+          - Verticals
+        operationId: deleteVerticalUtterance
+        summary: Deletes the utterance data.
+        responses:
+          '200':
+            description: Utterance properly deleted.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: Utterance not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+
+    /ulvc2/models: 
+      description: |
+        ## CRUD models resource. List, retrieve and delete models. Models are linked to users.
+      
+      get: 
+        tags:
+          - Models
+        operationId: listModels
+        parameters:
+          - in: query
+            name: userId
+            required: false
+            schema:
+              type: string
+          - in: query
+            name: modelId
+            required: false
+            schema: 
+              type: string
+        summary: Lists all models belonging to the organisation.
+        responses: 
+          '200':
+            description: Models properly listed
+            content:
+              application/json: 
+                schema: 
+                  properties:
+                    data: 
+                      type: array
+                      items: 
+                        type: object
+                        properties:
+                          id: 
+                            type: string
+                            description: The ID of the model. Use this ID to refere to the model in other parts of apiaudio.
+                          userId: 
+                            type: string
+                            description: Owner of the audio files used for training.
+                          name:
+                            type: string
+                            description: Custom name during training initiation.
+                          gender: 
+                            type: array
+                            items: 
+                              type: string
+                            description: Inherited from user of which data was used for training.
+                          languageCode: 
+                            type: array
+                            items: 
+                              type: string
+                            description: ISO compliant language code, e.g. `en-US`. Inherited from used verticals.
+                          verticalsUsed:
+                            type: array
+                            items:
+                              type: string
+                            description: IDs of verticals used for training data.
+                          numberOfUtterancesUsed:
+                            type: integer
+                            format: int32
+                          trainingDataDuration:
+                            type: integer
+                            format: int32
+                            description: Amount of seconds of all the training data.
+                          createdAt: 
+                            type: integer
+                            format: int32
+                            description: Unix time.
+                          trainingTime:
+                            type: integer
+                            format: int32
+                            description: Amount of seconds spent training.
+                          status:
+                            type: string
+                            description: |
+                              - "starting": Training initiated
+                              - "training": Training in progress
+                              - "deploying": Model is being deployed to apiaudio library
+                              - "ready": Model is ready to use in Speech module of apiaudio
+                              - "failed": Model training has failed. This normally shouldn't happen and indicates server-side error.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+
+    /ulvc2/models/{userId}/{modelId}:
+      delete:
+        tags:
+          - Models
+        operationId: deleteModel
+        summary: Deletes Model.
+        parameters:
+          - in: path
+            name: userId
+            required: true
+            schema:
+              type: string
+          - in: path
+            name: modelId
+            required: true
+            schema: 
+              type: string
+        responses:
+          '200':
+            description: Model successfully removed.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+          '404':
+            description: Model not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+
+    /ulvc2/recording/{userId}:
+      get:
+        tags:
+          - Recording
+        operationId: guideUser
+        summary: Returns utterances to be recorded. Looks at `selectedVerticals` of the user and subtracts already recorded utterances.
+        parameters:
+          - in: path 
+            name: userId
+            required: true
+            schema:
+              type: string
+          - in: query
+            name: quantity
+            required: false
+            description: The amount of utterances to return per vertical.
+            schema: 
+              type: integer
+          - in: query
+            name: verticalId
+            required: false
+            description: Specific vertical to be returned.
+            schema: 
+              type: string
+        responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  properties:
+                    data: 
+                      type: array
+                      items: 
+                        type: object
+                        properties: 
+                          verticalId: 
+                            type: string
+                          summary: 
+                            type: object
+                            properties: 
+                              count: 
+                                type: integer
+                                format: int32
+                              total: 
+                                type: integer
+                                format: int32
+                              percentage: 
+                                type: number
+                          utterancesRecorded:
+                            type: array
+                            items: 
+                              type: object
+                              properties: 
+                                id: 
+                                  type: string
+                                text: 
+                                  type: string                            
+                          utterancesToRecord: 
+                            type: array
+                            items: 
+                              type: object
+                              properties: 
+                                id: 
+                                  type: string
+                                text: 
+                                  type: string
+                  
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+
+    /ulvc2/feedback/{userId}:
+      get:
+        tags:
+          - QA Feedback
+        operationId: getFeedback
+        summary: Get QA feedback for recorded files.
+        parameters:
+          - in: path 
+            name: userId
+            required: true
+            schema:
+              type: string
+          - in: query 
+            name: verticalId
+            required: false
+            schema:
+              type: string
+          - in: query 
+            name: utteranceId
+            description: Return specified utterance evaluation
+            required: false
+            schema:
+              type: string
+          - in: query 
+            name: maxNumItems
+            description: Return specified number of item evaluations if utteranceId not specified
+            required: false
+            schema:
+              type: integer
+          - in: query 
+            name: deltaHours
+            description: Return item evaluations since given number of hours if verticalId and utteranceId not specified.
+            required: false
+            schema:
+              type: integer
+          - in: query 
+            name: extendedFeedback
+            description: Return expanded evaluations apart from summarised results.
+            required: false
+            schema:
+              type: boolean
+        responses:
+          '200':
+            description: Feedback successfully retrieved.
+            content:
+              application/json:
+                schema:
+                  properties:
+                    newAudioFeedback:
+                      type: object
+                      properties:
+                        assess_background_noise_passed:
+                          type: integer
+                          description: Number of items that passed the background noise evaluation. Lufs average of the background noise extracted after normalization needs to be under -57 dBs.
+                        assess_clipping_passed:
+                          type: integer
+                          description: Number of items that passed the clipping evaluation.
+                        assess_reverb_passed:
+                          type: integer
+                          description: Number of items that passed the reverberation evaluation.
+                        assess_text_coverage_passed:
+                          type: integer
+                          description: Number of items that passed the text coverage evaluation. Rating of the uttered words against the contents of the corresponding script.
+                        missed_words:
+                          type: array
+                          description: If text coverage failed, returns a list of missing words. 
+                        missed_word_indices:
+                          type: array
+                          description: If text coverage failed, returns a list of indices of the missing words.
+                        assess_interrupted_passed:
+                          type: integer
+                          description: Number of items that passed the interruptions evaluation. Interrupted is linked to the text coverage assessment and specifically flags premature stopped recordings by focusing on trailing missing words.
+                        assess_too_loud_passed:
+                          type: integer
+                          description: Number of items that passed the maximum loudness limit evaluation. Lufs average loudness of the recording needs to be under -12 dBs. 
+                        assess_too_quiet_passed:
+                          type: integer
+                          description: Number of items that passed the minimum loudness limit evaluation. Lufs average loudness of the recording needs to be above -29 dBs. 
+                        audio_evaluation_passed:
+                          type: integer
+                          description: Number of items that passed all the audio evaluation checks.
+                        valid_audio:
+                          type: integer
+                          description: Number of items that conform to valid audio checks. Valid audio files need to be .wav recordings of a minimum sample rate of 16 kHz, no longer than 15 seconds and must contain at least one intelligible word. 
+                        file_count:
+                          type: integer
+                          description: Total number of items.
+                    extendedFeedback:
+                      type: object
+                      description: Individual detailed evaluation for each returned item.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth'
+    
+    /ulvc2/training/{userId}:
+      post:
+        parameters: 
+          - name: userId
+            in: path
+            required: true
+            schema: 
+              type: string 
+        tags:
+          - training
+        operationId: postTraining
+        summary: Initiate training of a TTS model for given user. There must be a minimum of 100 files recorded that've passed the QA by the specified user.
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                properties: 
+                  name:
+                    type: string
+                    description: Custom name for the model. Purely descriptive.
+                  verticalsToUse:
+                    type: array
+                    description: IDs of verticals to use as training data. If not specified, all available files will be used.
+                    items:
+                      type: string
+        responses: 
+          '202':
+            description: Training triggered successfully.
+          '400':
+            description: Bad request. Error messages explain the problem.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequest'
+          '403':
+            description: Authentication error or restricted access.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadAuth' 
   components:
     securitySchemes:
       ApiKeyAuth:
