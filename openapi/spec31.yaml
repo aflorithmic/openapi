@@ -2081,7 +2081,7 @@
       
       post:
         tags:
-          - Users
+          - VC - Users
         operationId: postUsers
         summary: Create a User.
         requestBody:
@@ -2134,7 +2134,7 @@
                   $ref: '#/components/schemas/BadAuth'
       get: 
         tags:
-          - Users
+          - VC - Users
         operationId: listUsers
         summary: Lists users belonging to the organisation.
         responses: 
@@ -2190,7 +2190,7 @@
     /ulvc2/users/{userId}:
       get:
         tags:
-          - Users
+          - VC - Users
         operationId: getUser
         summary: Get user data.
         parameters:
@@ -2255,7 +2255,7 @@
 
       patch:
         tags:
-          - Users
+          - VC - Users
         operationId: updateUser
         summary: Update User data. 
         description: Cannot update ID.
@@ -2350,7 +2350,7 @@
 
       delete:
         tags:
-          - Users
+          - VC - Users
         operationId: deleteUser
         summary: Deletes User and all their files.
         parameters:
@@ -2387,7 +2387,7 @@
       
       get:
         tags:
-          - Files
+          - VC - Files
         operationId: listVCFiles
         summary: List all files of all users.
         responses:
@@ -2427,7 +2427,7 @@
     /ulvc2/files/{userId}:
       get:
         tags:
-          - Files
+          - VC - Files
         operationId: listUserFiles
         summary: List all files of the user.
         parameters:
@@ -2475,7 +2475,7 @@
                   $ref: '#/components/schemas/BadRequest'
       delete:
         tags:
-          - Files
+          - VC - Files
         operationId: deleteUserFiles
         summary: Deletes all files of the user.
         parameters:
@@ -2510,7 +2510,7 @@
     /ulvc2/files/{userId}/{verticalId}/{utteranceId}:
       get:
         tags:
-          - Files
+          - VC - Files
         operationId: getFile
         summary: Downloads file.
         parameters:
@@ -2568,7 +2568,7 @@
 
       post:
         tags:
-          - Files
+          - VC - Files
         operationId: postFile
         summary: Uploads file.
         description: Must be a valid wav format, less than 5 MB. Cannot create a file that already exists for given utterance. For that use PUT method.
@@ -2628,7 +2628,7 @@
 
       put:
         tags:
-          - Files
+          - VC - Files
         operationId: putFile
         summary: Updates file.
         parameters:
@@ -2692,7 +2692,7 @@
 
       delete:
         tags:
-          - Files
+          - VC - Files
         operationId: deleteFile
         summary: Deletes file.
         parameters:
