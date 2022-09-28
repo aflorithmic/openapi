@@ -1155,7 +1155,7 @@
                   },
                   "sections": {
                     "type": "object",
-                    "description": "Separate configurations for Script section. E.g. to specify a separate voice and speed for Script section `intro` the object would be `{\"main\": {\"voice\": \"Leah\", \"speed\": 1.2}}`.\n",
+                    "description": "Separate configurations for Script section. E.g. to specify a separate voice and speed for Script section `intro` the object would be `{\"intro\": {\"voice\": \"Leah\", \"speed\": 1.2}}`.\n",
                     "properties": {},
                     "additionalProperties": true
                   },
