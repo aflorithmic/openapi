@@ -1261,6 +1261,12 @@
                       Object referencing the audience used in Speech production.
                     properties: {}
                     additionalProperties: true
+                  mediaFiles:
+                    type: object
+                    description: |
+                      Object referencing the media file placeholders used in script. The format should be key=placeholder value=mediaId of the uploaded file.
+                    properties: {}
+                    additionalProperties: true
                   soundTemplate:
                     type: string
                     description: | 

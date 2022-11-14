@@ -1709,6 +1709,12 @@
                     "properties": {},
                     "additionalProperties": true
                   },
+                  "mediaFiles": {
+                    "type": "object",
+                    "description": "Object referencing the media file placeholders used in script. The format should be key=placeholder value=mediaId of the uploaded file.\n",
+                    "properties": {},
+                    "additionalProperties": true
+                  },
                   "soundTemplate": {
                     "type": "string",
                     "description": "Reference to the sound template to be applied. Available sound templates: https://library.api.audio/sounds\n"
