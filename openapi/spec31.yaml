@@ -1343,7 +1343,7 @@
                   connectors:
                     type: array
                     description: |
-                      List of dicts specifying configuration for particular 3rd party connection. For guidelines in context of supported 3rd party application, see [connectors documentation](https://docs.api.audio/docs/what-are-connectors).
+                      List of dicts specifying configuration for particular 3rd party connection. For guidelines in context of supported 3rd party application, see [connectors documentation](https://docs.api.audio/docs/julep-connector).
                     items:
                       type: object
                       properties: {}
