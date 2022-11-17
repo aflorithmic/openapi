@@ -1077,7 +1077,7 @@
   
         parameters:
           - in: header
-            name: Accept
+            name: accept
             description: Specifies the format of the output audio.
             required: true
             schema:
